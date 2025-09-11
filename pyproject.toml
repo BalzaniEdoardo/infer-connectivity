@@ -23,7 +23,8 @@ classifiers = [
 dependencies = [
     "nemos",
     "matplotlib>=3.7",
-    "networkx"
+    "networkx",
+    "click"
 ]
 
 # Optional dependencies for documentation [docs] and testing/linting [dev]:
