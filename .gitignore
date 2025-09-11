@@ -152,3 +152,7 @@ docs/data/
 
 # rst generated files
 docs/stubs
+
+# ingore output files.
+*.npy
+*.graphml

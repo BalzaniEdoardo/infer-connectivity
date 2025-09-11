@@ -93,47 +93,5 @@ def create_network(n_e, n_i, m_ee, m_ei, m_ie, m_ii, r, output, save_matrix, see
             click.echo(f"Error calculating statistics: {e}", err=True)
 
 
-@click.group()
-def cli():
-    """Neural Network Generation Tools"""
-    pass
-
-
-@cli.command()
-@click.argument('matrix_file')
-def analyze_matrix(matrix_file):
-    """Analyze a saved connectivity matrix."""
-    try:
-        matrix = np.load(matrix_file)
-        click.echo(f"Matrix shape: {matrix.shape}")
-        click.echo(f"Total connections: {np.sum(matrix)}")
-        click.echo(f"Connection density: {np.sum(matrix) / (matrix.shape[0] * matrix.shape[1]):.4f}")
-        click.echo(f"Mean degree: {np.mean(np.sum(matrix, axis=1)):.2f}")
-    except Exception as e:
-        click.echo(f"Error analyzing matrix: {e}", err=True)
-
-
-@cli.command()
-@click.argument('graphml_file')
-def analyze_graph(graphml_file):
-    """Analyze a saved GraphML network."""
-    try:
-        G = nx.read_graphml(graphml_file, node_type=int)
-        # Assume first 300 nodes are excitatory (you might want to make this configurable)
-        n_e = 300
-        stats = get_network_stats(G, n_e)
-
-        click.echo(f"Graph from: {graphml_file}")
-        click.echo(f"Nodes: {stats['total_nodes']} (E: {stats['excitatory_nodes']}, I: {stats['inhibitory_nodes']})")
-        click.echo(f"Edges: {stats['total_edges']}")
-        click.echo(f"Average degree: {stats['avg_degree']:.2f}")
-
-    except Exception as e:
-        click.echo(f"Error analyzing graph: {e}", err=True)
-
-
-# Add the original create_network command to the group
-cli.add_command(create_network)
-
 if __name__ == "__main__":
-    cli()
+    create_network()
