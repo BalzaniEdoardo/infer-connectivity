@@ -7,4 +7,4 @@ from .Simulatenew2 import (
     Simulate,
     step
 )
-from visualizations import visualize_connectivity_matrix
+from .visualizations import visualize_connectivity_matrix
