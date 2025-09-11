@@ -1,0 +1,59 @@
+# Define the build system requirements for the project.
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "infer-connectivity"
+# we use this instead of setting version, so that setuptools_scm can dynamically
+# set the version number. see notes for details
+dynamic = ["version"]
+authors = [
+  { name="Edoardo Balzani", email="edoardo.balzani87@gmail.com" },
+]
+description = "Infer connectivity from Integrate-and-Fire simulations."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "nemos",
+    "matplotlib>=3.7",
+    "networkx"
+]
+
+# Optional dependencies for documentation [docs] and testing/linting [dev]:
+[project.optional-dependencies]
+dev = [
+    "black",                        # Code formatter
+    "isort",                        # Import sorter
+    "pytest",                       # Testing framework
+    "flake8",                       # Code linter
+    "pytest-cov",                   # Test coverage plugin for pytest
+    "pydocstyle",                    # Docstrings linter
+]
+
+# Configure package discovery for setuptools
+[tool.setuptools.packages.find]
+where = ["src"]     # The directory where package modules are located
+include = ["infer_connectivity"] # The specific package(s) to include in the distribution
+
+[tool.setuptools_scm]
+version_scheme = 'python-simplified-semver'
+local_scheme = 'no-local-version'
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if __name__ == .__main__.:"    # Exclude from coverage
+]
+
+[tool.pydocstyle]
+convention = "numpy"                   # Convention for linting (numpy, google, pep257)
+match = "^(?!version\\.py$).*\\.py$"   # This matches everything that ends with .py, except for version.py
