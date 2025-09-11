@@ -9,6 +9,8 @@ import random
 import numpy as np
 import networkx as nx
 from infer_connectivity import GenerateEdgeSet, CreateGraph, save_connectivity_matrix, get_network_stats
+import json
+import pathlib
 
 
 @click.command()
@@ -61,6 +63,10 @@ def create_network(n_e, n_i, m_ee, m_ei, m_ie, m_ii, r, output, save_matrix, see
     # Save GraphML file
     try:
         nx.write_graphml(G, output)
+        params = dict(n_e=n_e, n_i=n_i, m_ee=m_ee, m_ei=m_ei, m_ie=m_ie, m_ii=m_ii, r=r)
+        path_param = pathlib.Path(output).stem + "_params.json"
+        with open(path_param, "w") as f:
+            json.dump(params, f)
         click.echo(f"✓ Network saved as GraphML: {output}")
     except Exception as e:
         click.echo(f"Error saving GraphML: {e}", err=True)
