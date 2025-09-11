@@ -3,6 +3,7 @@
 Simple CLI wrapper for the original neural simulation code.
 Minimal changes - just adds Click interface to existing functions.
 """
+import pathlib
 
 import click
 import os
@@ -14,8 +15,8 @@ from infer_connectivity.Simulatenew2 import run_simulation_with_params
 @click.option('--output-prefix', default='simulation', help='Prefix for output files')
 @click.option('--seed', default=102194, type=int, help='Random seed')
 @click.option('--duration', default=3.0, help='Simulation duration in seconds')
-@click.option('--n-e', default=300, help='Number of excitatory neurons')
-@click.option('--n-i', default=100, help='Number of inhibitory neurons')
+@click.option('--n_e', default=300, help='Number of excitatory neurons')
+@click.option('--n_i', default=100, help='Number of inhibitory neurons')
 @click.option('--refrac', default=20, help='Refractory period')
 @click.option('--ee-delay-min', default=10, help='Min EE delay')
 @click.option('--ee-delay-max', default=23, help='Max EE delay')
@@ -48,6 +49,10 @@ def simulate(graph_file, output_prefix, seed, duration, n_e, n_i, refrac,
     if not os.path.exists(graph_file):
         click.echo(f"Error: Network file '{graph_file}' not found!", err=True)
         return
+
+    # attach graph name to path
+    graph_name = pathlib.Path(pathlib.Path(graph_file).stem).name
+    output_prefix = graph_name + "_" + output_prefix
 
     # Load network to get actual size
     import networkx as nx
