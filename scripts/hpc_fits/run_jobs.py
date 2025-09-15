@@ -4,7 +4,7 @@ base_dir = Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/")
 model_dir = base_dir / "models"
 simulations_dir = base_dir / "simulations"
 path_to_config = base_dir / "configs"
-path_to_output = base_dir / "fit_output"
+path_to_output = base_dir / "outputs"
 log_dir = base_dir / "logs"
 fit_glm_script = "fit_glm.py"
 
