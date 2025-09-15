@@ -1,6 +1,6 @@
 from pathlib import Path
 
-base_dir = Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/")
+base_dir = Path("/mnt/home/ebalzani/ceph/synaptic_connectivity/")
 model_dir = base_dir / "models"
 simulations_dir = base_dir / "simulations"
 path_to_config = base_dir / "configs"
