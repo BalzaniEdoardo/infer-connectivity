@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 base_dir = Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/")
 model_dir = base_dir / "models"
 simulations_dir = base_dir / "simulations"
@@ -32,7 +31,9 @@ def create_dsbatch_script() -> int:
                         "source ~/.bashrc",
                         "source ~/venvs/nemos/bin/activate",
                     ]
-                    lines.extend(f"python -u {(base_dir / fit_glm_script).as_posix()} {config_file} {dataset} {path_to_output}")
+                    lines.extend(
+                        f"python -u {(base_dir / fit_glm_script).as_posix()} {config_file} {dataset} {path_to_output}"
+                    )
 
                     log_name = f"conf_{config_file.stem}_{dataset.stem}_fit_glm.log"
                     command = f'( {" && ".join(lines)} ) &> {log_dir / log_name}'

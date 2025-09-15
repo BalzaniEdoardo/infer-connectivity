@@ -4,28 +4,50 @@ Command line interface for neural network generation.
 Uses the modular functions from infer_connectivity package.
 """
 
-import click
-import random
-import numpy as np
-import networkx as nx
-from infer_connectivity import GenerateEdgeSet, CreateGraph, save_connectivity_matrix, get_network_stats
 import json
 import pathlib
+import random
+
+import click
+import networkx as nx
+import numpy as np
+
+from infer_connectivity import (
+    CreateGraph,
+    GenerateEdgeSet,
+    get_network_stats,
+    save_connectivity_matrix,
+)
 
 
 @click.command()
-@click.option('--n_e', default=300, help='Number of excitatory neurons')
-@click.option('--n_i', default=100, help='Number of inhibitory neurons')
-@click.option('--m_ee', default=20.0, help='Mean connections from excitatory to excitatory')
-@click.option('--m_ei', default=20.0, help='Mean connections from excitatory to inhibitory')
-@click.option('--m_ie', default=20.0, help='Mean connections from inhibitory to excitatory')
-@click.option('--m_ii', default=20.0, help='Mean connections from inhibitory to inhibitory')
-@click.option('--r', default=5.0, help='Variability parameter')
-@click.option('--output', default='graph0.graphml', help='Output GraphML file name')
-@click.option('--save-matrix', help='Save connectivity matrix as numpy array (provide filename without extension)')
-@click.option('--seed', default=None, type=int, help='Random seed for reproducibility')
-@click.option('--show-stats/--no-show-stats', default=True, help='Show network statistics')
-def create_network(n_e, n_i, m_ee, m_ei, m_ie, m_ii, r, output, save_matrix, seed, show_stats):
+@click.option("--n_e", default=300, help="Number of excitatory neurons")
+@click.option("--n_i", default=100, help="Number of inhibitory neurons")
+@click.option(
+    "--m_ee", default=20.0, help="Mean connections from excitatory to excitatory"
+)
+@click.option(
+    "--m_ei", default=20.0, help="Mean connections from excitatory to inhibitory"
+)
+@click.option(
+    "--m_ie", default=20.0, help="Mean connections from inhibitory to excitatory"
+)
+@click.option(
+    "--m_ii", default=20.0, help="Mean connections from inhibitory to inhibitory"
+)
+@click.option("--r", default=5.0, help="Variability parameter")
+@click.option("--output", default="graph0.graphml", help="Output GraphML file name")
+@click.option(
+    "--save-matrix",
+    help="Save connectivity matrix as numpy array (provide filename without extension)",
+)
+@click.option("--seed", default=None, type=int, help="Random seed for reproducibility")
+@click.option(
+    "--show-stats/--no-show-stats", default=True, help="Show network statistics"
+)
+def create_network(
+    n_e, n_i, m_ee, m_ei, m_ie, m_ii, r, output, save_matrix, seed, show_stats
+):
     """
     Create a neural network with specified parameters.
 
@@ -50,7 +72,9 @@ def create_network(n_e, n_i, m_ee, m_ei, m_ie, m_ii, r, output, save_matrix, see
         random.seed(seed)
         np.random.seed(seed)
 
-    click.echo(f"Creating network with {n_e} excitatory and {n_i} inhibitory neurons...")
+    click.echo(
+        f"Creating network with {n_e} excitatory and {n_i} inhibitory neurons..."
+    )
 
     # Generate the network
     try:
@@ -92,8 +116,12 @@ def create_network(n_e, n_i, m_ee, m_ei, m_ie, m_ii, r, output, save_matrix, see
             click.echo(f"  - Inhibitory: {stats['inhibitory_nodes']}")
             click.echo(f"Total edges: {stats['total_edges']}")
             click.echo(f"Average degree: {stats['avg_degree']:.2f}")
-            click.echo(f"Average in-degree: {stats['avg_in_degree']:.2f} ± {stats['std_in_degree']:.2f}")
-            click.echo(f"Average out-degree: {stats['avg_out_degree']:.2f} ± {stats['std_out_degree']:.2f}")
+            click.echo(
+                f"Average in-degree: {stats['avg_in_degree']:.2f} ± {stats['std_in_degree']:.2f}"
+            )
+            click.echo(
+                f"Average out-degree: {stats['avg_out_degree']:.2f} ± {stats['std_out_degree']:.2f}"
+            )
             click.echo("=" * 50)
         except Exception as e:
             click.echo(f"Error calculating statistics: {e}", err=True)
