@@ -62,7 +62,7 @@ logging.log(level=logging.INFO, msg="Set up fit hyperparameters.")
 counts = spikes_tsgroup.count(binsize)
 logging.log(level=logging.INFO, msg="Counted spikes.")
 
-basis_cls = getattr(nmo, basis_cls_name)
+basis_cls = getattr(nmo.basis, basis_cls_name)
 basis = basis_cls(n_basis_funcs, window_size)
 
 logging.log(level=logging.INFO, msg="Defined basis.")
