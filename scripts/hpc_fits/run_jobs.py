@@ -48,7 +48,6 @@ def create_dsbatch_script() -> int:
 def run_experiment():
 
     num_fits = create_dsbatch_script()
-    print(f"Disbatch script written to {disbatch_script_path}")
     print("To run:")
     num_jobs = min(20, num_fits)  # Use at most 20 tasks
     print(
