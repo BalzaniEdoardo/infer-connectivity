@@ -10,6 +10,21 @@ import numpy as np
 import pynapple as nap
 from sklearn.model_selection import GridSearchCV
 
+# config logging
+import logging
+
+# Basic setup that prints to terminal
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()  # This ensures output goes to terminal
+    ]
+)
+
+logger = logging.getLogger(__name__)
+logger.info("Check logger...")
+
 jax.config.update("jax_enable_x64", True)
 
 conf_path = pathlib.Path(sys.argv[1])
