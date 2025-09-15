@@ -7,6 +7,8 @@ import pathlib
 base_dir = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/configs")
 
 conf_path = pathlib.Path("configs")
+conf_path.mkdir(exist_ok=True, parents=True)
+
 regularizers = ["UnRegularized", "Ridge", "Lasso", "GroupLasso"]
 observation_model = ["Bernoulli", "Poisson"]
 basis_class_name = ["RaisedCosineLogConv"]
