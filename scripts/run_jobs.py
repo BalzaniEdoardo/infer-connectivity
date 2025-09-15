@@ -1,0 +1,60 @@
+from pathlib import Path
+import json
+
+base_dir = Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/")
+model_dir = base_dir / "models"
+simulations_dir = base_dir / "simulations"
+path_to_config = base_dir / "configs" / "glm_fit_configs.json"
+log_dir = base_dir / "logs"
+fit_glm_script = "fit_glm.py"
+
+model_dir.mkdir(exist_ok=True, parents=True)
+log_dir.mkdir(exist_ok=True, parents=True)
+simulations_dir.mkdir(exist_ok=True, parents=True)
+
+
+disbatch_script_path = base_dir / "run_experiment.dsb"
+disbatch_script_path.mkdir(exist_ok=True, parents=True)
+
+
+def create_dsbatch_script() -> int:
+    with open(path_to_config, "r") as f:
+        configs = json.load(f)
+
+    tot_configs = len(configs)
+    tot_datasets = 0
+    with open(disbatch_script_path, "w") as f:
+        for conf_num in range(tot_configs):
+            for dataset in simulations_dir.iterdir():
+
+                # Lines for loading the virtual environment
+                lines = [
+                    "source ~/.bashrc",
+                    "source ~/venvs/nemos/bin/activate",
+                ]
+                lines.extend(f"python -u {(base_dir / fit_glm_script).as_posix()} {conf_num} {dataset}")
+
+                log_name = f"conf_{conf_num}_{dataset.stem}_fit_glm.log"
+                command = f'( {" && ".join(lines)} ) &> {log_dir / log_name}'
+                f.write(command + "\n")
+                tot_datasets += 1
+
+    print(f"Disbatch script written to {disbatch_script_path}")
+
+    return tot_configs * tot_datasets
+
+
+def run_experiment():
+
+    num_fits = create_dsbatch_script()
+    print(f"Disbatch script written to {disbatch_script_path}")
+    print("To run:")
+    num_jobs = min(20, num_fits)  # Use at most 20 tasks
+    print(
+        "module load disBatch; "
+        "mkdir disbatch_logs; "
+        f"sbatch -n {num_jobs} -p gpu --gpus-per-task=1 -t 0-12 --mem=32GB -c 6 disBatch -p disbatch_logs/ {disbatch_script_path}"
+    )
+
+
+run_experiment()
