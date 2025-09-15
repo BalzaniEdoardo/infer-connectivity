@@ -34,7 +34,7 @@ def create_dsbatch_script() -> int:
                     ]
                     lines.extend(f"python -u {(base_dir / fit_glm_script).as_posix()} {config_file} {dataset} {path_to_output}")
 
-                    log_name = f"conf_{conf_num}_{dataset.stem}_fit_glm.log"
+                    log_name = f"conf_{config_file.stem}_{dataset.stem}_fit_glm.log"
                     command = f'( {" && ".join(lines)} ) &> {log_dir / log_name}'
                     f.write(command + "\n")
                     tot_datasets += 1
