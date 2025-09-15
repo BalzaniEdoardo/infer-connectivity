@@ -22,23 +22,22 @@ def create_dsbatch_script() -> int:
     tot_datasets = 0
     with open(disbatch_script_path, "w") as f:
         for config_file in path_to_config.iterdir():
-            for conf_num in range(tot_configs):
-                for dataset in simulations_dir.iterdir():
+            for dataset in simulations_dir.iterdir():
 
-                    # Lines for loading the virtual environment
-                    lines = [
-                        "source ~/.bashrc",
-                        "source ~/venvs/nemos/bin/activate",
-                    ]
-                    lines.extend(
-                        f"python -u {(base_dir / fit_glm_script).as_posix()} {config_file} {dataset} {path_to_output}"
-                    )
+                # Lines for loading the virtual environment
+                lines = [
+                    "source ~/.bashrc",
+                    "source ~/venvs/nemos/bin/activate",
+                ]
+                lines.extend(
+                    f"python -u {(base_dir / fit_glm_script).as_posix()} {config_file} {dataset} {path_to_output}"
+                )
 
-                    log_name = f"conf_{config_file.stem}_{dataset.stem}_fit_glm.log"
-                    command = f'( {" && ".join(lines)} ) &> {log_dir / log_name}'
-                    f.write(command + "\n")
-                    tot_datasets += 1
-                tot_configs += 1
+                log_name = f"conf_{config_file.stem}_{dataset.stem}_fit_glm.log"
+                command = f'( {" && ".join(lines)} ) &> {log_dir / log_name}'
+                f.write(command + "\n")
+                tot_datasets += 1
+            tot_configs += 1
 
     print(f"Disbatch script written to {disbatch_script_path}")
 
