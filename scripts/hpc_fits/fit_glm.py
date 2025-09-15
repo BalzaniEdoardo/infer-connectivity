@@ -51,7 +51,7 @@ solver_name = "LBFGS" if "Lasso" not in regularizer else None
 solver_kwargs = {"tol": 10**-12}
 param_grid = {
     "regularizer_strength": (
-        np.geomspace(10**-8, 10**-3, 8) if regularizer != "UnRegularized" else None
+        np.geomspace(10**-8, 10**-3, 8) if regularizer != "UnRegularized" else [None]
     )
 }
 
