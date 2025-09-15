@@ -13,8 +13,8 @@ import pathlib
 jax.config.update("jax_enable_x64", True)
 
 conf_path = pathlib.Path(sys.argv[1])
-dataset_path = pathlib.Path(sys.argv[3])
-output_dir = pathlib.Path(sys.argv[4])
+dataset_path = pathlib.Path(sys.argv[2])
+output_dir = pathlib.Path(sys.argv[3])
 
 logging.log(level=logging.INFO, msg=f"Fitting dataset: '{dataset_path}'.")
 
