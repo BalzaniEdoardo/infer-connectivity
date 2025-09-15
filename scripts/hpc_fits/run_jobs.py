@@ -29,7 +29,7 @@ def create_dsbatch_script() -> int:
                     "source ~/.bashrc",
                     "source ~/venvs/nemos/bin/activate",
                 ]
-                lines.extend(
+                lines.append(
                     f"python -u {(base_dir / fit_glm_script).as_posix()} {config_file} {dataset} {path_to_output}"
                 )
 
