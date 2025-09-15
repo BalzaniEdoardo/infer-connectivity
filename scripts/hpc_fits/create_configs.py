@@ -19,8 +19,8 @@ for reg, obs, bas, neu in pars:
     conf_dict = dict(
         observation_model=obs,
         regularizer=reg,
-        basis_cls_name=basis_class_name,
-        neuron_id=neuron_id,
+        basis_cls_name=bas,
+        neuron_id=neu,
     )
     with open(base_dir/f"{reg}_{obs}_{bas}_{neu}.json", "w") as f:
-        json.dumps(conf_dict, f)
+        json.dump(conf_dict, f)
