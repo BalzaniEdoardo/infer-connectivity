@@ -110,8 +110,7 @@ if "param_regularizer_strength" in cls.cv_results_:
 
 metadata = {
     "config": conf_dict,
-    "dataset_path": dataset_path,
-    "neuron_fit": neuron_fit,
+    "dataset_path": dataset_path.as_posix(),
     "binsize": binsize,
     "history_window": history_window,
     "n_basis_funcs": n_basis_funcs,
