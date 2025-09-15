@@ -10,8 +10,6 @@ import numpy as np
 import pynapple as nap
 from sklearn.model_selection import GridSearchCV
 
-# config logging
-import logging
 
 # Basic setup that prints to terminal
 logging.basicConfig(
