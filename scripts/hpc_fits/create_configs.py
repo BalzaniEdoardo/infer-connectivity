@@ -23,4 +23,4 @@ for reg, obs, bas, neu in pars:
         neuron_id=neuron_id,
     )
     with open(base_dir/f"{reg}_{obs}_{bas}_{neu}.json", "w") as f:
-        json.dump(conf_dict, f)
+        json.dumps(conf_dict, f)
