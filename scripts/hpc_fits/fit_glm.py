@@ -131,6 +131,6 @@ model_path = (
     output_dir
     / f"best_model_{dataset_path.stem}_neuron_{neuron_fit}_config_{conf_path.stem}.npz"
 )
-cls.best_estimator_.save(model_path)
+cls.best_estimator_.save_params(model_path)
 
 logging.log(level=logging.INFO, msg=f"Saved CV results and best model to {output_dir}")
