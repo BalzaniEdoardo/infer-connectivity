@@ -15,7 +15,6 @@ path_to_output.mkdir(exist_ok=True, parents=True)
 
 
 disbatch_script_path = base_dir / "run_experiment.dsb"
-disbatch_script_path.mkdir(exist_ok=True, parents=True)
 
 
 def create_dsbatch_script() -> int:
