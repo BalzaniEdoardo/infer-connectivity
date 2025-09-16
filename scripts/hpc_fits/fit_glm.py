@@ -96,6 +96,17 @@ model = nmo.glm.GLM(
     solver_kwargs=solver_kwargs,
 )
 
+# set up mask for group lasso
+if regularizer == "GroupLasso":
+    logging.log(level=logging.INFO, msg="Preparing mask for group lasso.")
+    mask = np.eye(len(spikes_tsgroup), dtype=float)
+    mask = np.repeat(mask, basis.n_basis_funcs, axis=1)
+    assert mask.shape[1] == X.shape[1], "Mask and X shape are not matching"
+    model.regularizer.mask = mask
+    logging.log(level=logging.INFO, msg="Mask setup succefully.")
+
+
+
 logging.log(level=logging.INFO, msg="Start model fitting...")
 cls = GridSearchCV(model, param_grid, cv=5)
 cls.fit(X, counts[:, neuron_fit])
