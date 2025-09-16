@@ -25,12 +25,11 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
 
     for cv_file in cv_files:
         # Parse filename to extract identifiers
-        filename_parts = cv_file.stem.split('_')
-        dataset_name = filename_parts[2]  # dataset_<name>
+        dataset_name = cv_file.stem.split('_dataset')[1:].split("_")[0]  # dataset_<name>
         print("dname", dataset_name)
-        neuron_id = filename_parts[4]  # neuron_<id>
+        neuron_id = cv_file.stem.split('_neuron')[1:].split("_")[0]
         print("neu id", neuron_id)
-        config_name = '_'.join(filename_parts[6:])  # config_<name>
+        config_name = cv_file.stem.split('_config')[1:].split(".")[0]
         print("config_name", config_name)
 
         # Load CV results
