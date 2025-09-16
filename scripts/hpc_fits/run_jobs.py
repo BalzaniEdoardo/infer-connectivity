@@ -53,7 +53,7 @@ def run_experiment():
     print(
         "module load disBatch; "
         "mkdir disbatch_logs; "
-        f"sbatch -n {num_jobs} -p gpu --gpus-per-task=1 -t 0-12 --mem=32GB -c 6 disBatch -p disbatch_logs/ {disbatch_script_path}"
+        f"sbatch -n {num_jobs} -p gpu --gpus-per-task=1 -t 0-12 --mem-per-cpu=16GB -c 6 disBatch -p disbatch_logs/ {disbatch_script_path}"
     )
 
 
