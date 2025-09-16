@@ -27,7 +27,7 @@ def create_dsbatch_script() -> int:
                 # Lines for loading the virtual environment
                 lines = [
                     "source ~/.bashrc",
-                    "source ~/venvs/nemos/bin/activate",
+                    "source ~/Code/infer-connectivity/.venv/bin/activate",
                 ]
                 lines.append(
                     f"python -u {(base_dir / fit_glm_script).as_posix()} {config_file} {dataset} {path_to_output}"
