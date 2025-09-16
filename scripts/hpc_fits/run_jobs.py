@@ -26,7 +26,7 @@ def create_dsbatch_script() -> int:
 
                 # Lines for loading the virtual environment
                 lines = [
-                    "source ~/.bashrc",
+                    "source ~/cudaenv.sh",
                     "source ~/Code/infer-connectivity/.venv/bin/activate",
                 ]
                 lines.append(
