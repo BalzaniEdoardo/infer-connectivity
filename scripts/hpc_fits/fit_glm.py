@@ -103,7 +103,7 @@ if regularizer == "GroupLasso":
     mask = np.repeat(mask, basis.n_basis_funcs, axis=1)
     assert mask.shape[1] == X.shape[1], "Mask and X shape are not matching"
     model.regularizer.mask = mask
-    logging.log(level=logging.INFO, msg="Mask setup succefully.")
+    logging.log(level=logging.INFO, msg="Mask setup successfully.")
 
 
 
