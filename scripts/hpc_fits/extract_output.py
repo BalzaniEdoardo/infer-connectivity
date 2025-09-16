@@ -38,7 +38,7 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
         if not metadata_file.exists():
             print(f"Warning: Metadata file not found for {cv_file.name}")
             print(f"metadata file name: {metadata_file.name}")
-            print(list(output_dir.glob("metadata_*.json")))
+            print(metadata_file in list(output_dir.glob("metadata_*.json")))
             continue
 
         with open(metadata_file, 'r') as f:
