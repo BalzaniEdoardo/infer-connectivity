@@ -3,14 +3,6 @@ import pathlib
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Optional, Any
-import logging
-
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 
 def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
@@ -29,7 +21,7 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
 
     # Find all CV results files
     cv_files = list(output_dir.glob("cv_results_*.npz"))
-    logger.info(f"Found {len(cv_files)} CV results files")
+    print(f"Found {len(cv_files)} CV results files")
 
     for cv_file in cv_files:
         try:
@@ -45,7 +37,7 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
             # Find corresponding metadata file
             metadata_file = output_dir / f"metadata_{dataset_name}_neuron_{neuron_id}_config_{config_name}.json"
             if not metadata_file.exists():
-                logger.warning(f"Metadata file not found for {cv_file.name}")
+                print(f"Warning: Metadata file not found for {cv_file.name}")
                 continue
 
             with open(metadata_file, 'r') as f:
@@ -122,11 +114,11 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
             results.append(result)
 
         except Exception as e:
-            logger.error(f"Error processing {cv_file}: {str(e)}")
+            print(f"Error processing {cv_file}: {str(e)}")
             continue
 
     if not results:
-        logger.warning("No valid results found!")
+        print("Warning: No valid results found!")
         return pd.DataFrame()
 
     df = pd.DataFrame(results)
@@ -134,7 +126,7 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
     # Sort by best test score (descending)
     df = df.sort_values('best_test_score', ascending=False).reset_index(drop=True)
 
-    logger.info(f"Successfully collected {len(df)} fit results")
+    print(f"Successfully collected {len(df)} fit results")
 
     return df
 
@@ -167,28 +159,28 @@ def main():
     output_dir = pathlib.Path("/mnt/home/ebalzani/ceph/synaptic_connectivity/outputs")
 
     if not output_dir.exists():
-        logger.error(f"Output directory does not exist: {output_dir}")
+        print(f"Error: Output directory does not exist: {output_dir}")
         return
 
     # Collect results
-    logger.info("Starting results collection...")
+    print("Starting results collection...")
     df = collect_fit_results(output_dir)
 
     if df.empty:
-        logger.error("No results collected!")
+        print("Error: No results collected!")
         return
 
     # Save main results DataFrame
     results_csv = output_dir / "all_fit_results.csv"
     df.to_csv(results_csv, index=False)
-    logger.info(f"Saved detailed results to {results_csv}")
+    print(f"Saved detailed results to {results_csv}")
 
     # Create and save summary statistics
     summary_df = create_summary_stats(df)
     if not summary_df.empty:
         summary_csv = output_dir / "fit_results_summary.csv"
         summary_df.to_csv(summary_csv, index=False)
-        logger.info(f"Saved summary statistics to {summary_csv}")
+        print(f"Saved summary statistics to {summary_csv}")
 
     # Print basic info
     print(f"\nResults Summary:")
