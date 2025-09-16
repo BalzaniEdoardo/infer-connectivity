@@ -119,6 +119,14 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
 
     if not results:
         print("Warning: No valid results found!")
+
+        # Let's also check if there are any metadata files at all
+        metadata_files = list(output_dir.glob("metadata_*.json"))
+        print(f"Found {len(metadata_files)} metadata files")
+
+        if len(metadata_files) > 0:
+            print("Some jobs may still be running. Try running this script again later.")
+
         return pd.DataFrame()
 
     df = pd.DataFrame(results)
