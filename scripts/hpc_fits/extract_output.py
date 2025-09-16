@@ -43,9 +43,11 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
             with open(metadata_file, 'r') as f:
                 metadata = json.load(f)
 
+            print("Loaded metadata file.")
             # Find corresponding model file
             model_file = output_dir / f"best_model_{dataset_name}_neuron_{neuron_id}_config_{config_name}.npz"
             model_exists = model_file.exists()
+            print(f"Model exists == {model_exists}")
 
             # Extract configuration info
             config = metadata['config']
@@ -117,6 +119,8 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
             print(f"Error processing {cv_file}: {str(e)}")
             continue
 
+    print("Finished collection")
+    print(results[:3])
     if not results:
         print("Warning: No valid results found!")
 
