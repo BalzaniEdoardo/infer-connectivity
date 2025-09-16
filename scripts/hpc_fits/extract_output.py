@@ -33,7 +33,7 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
         print("config_name", config_name)
 
         # Load CV results
-        cv_data = np.load(cv_file)
+        cv_data = np.load(cv_file, allow_pickle=True)
 
         # Find corresponding metadata file
         metadata_file = output_dir / f"metadata_{dataset_name}_neuron_{neuron_id}_config_{config_name}.json"
