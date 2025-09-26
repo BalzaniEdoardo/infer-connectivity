@@ -1,12 +1,13 @@
 from pathlib import Path
 
+fit_session_name = "sonica-sept-25-2026"
 base_dir = Path("/mnt/home/ebalzani/ceph/synaptic_connectivity/")
 script_dir = Path("/mnt/home/ebalzani/Code/infer-connectivity/scripts/hpc_fits")
-model_dir = base_dir / "models"
-simulations_dir = base_dir / "simulations"
-path_to_config = base_dir / "configs"
-path_to_output = base_dir / "outputs"
-log_dir = base_dir / "logs"
+model_dir = base_dir / "models" / fit_session_name
+simulations_dir = base_dir / "simulations" / fit_session_name
+path_to_config = base_dir / "configs" / fit_session_name
+path_to_output = base_dir / "outputs" / fit_session_name
+log_dir = base_dir / "logs" / fit_session_name
 fit_glm_script = "fit_glm.py"
 
 model_dir.mkdir(exist_ok=True, parents=True)
