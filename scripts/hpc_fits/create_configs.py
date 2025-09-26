@@ -13,7 +13,7 @@ conf_path.mkdir(exist_ok=True, parents=True)
 regularizers = ["UnRegularized", "Ridge", "Lasso", "GroupLasso"]
 observation_model = ["Bernoulli", "Poisson"]
 basis_class_name = ["RaisedCosineLogConv"]
-neuron_id = range(100)
+neuron_id = range(400)
 
 pars = product(regularizers, observation_model, basis_class_name, neuron_id)
 for reg, obs, bas, neu in pars:
