@@ -57,9 +57,9 @@ def compute_perievent(rate: nap.TsdFrame, spike_times: nap.Ts, window_size_bin):
 jax.config.update("jax_enable_x64", True)
 
 path_simulations = (
-    pathlib.Path(__file__).parent.parent / "graph0_simulation_spikes.pckl"
+    pathlib.Path(__file__).parent.parent / "simulations" / "100-neurons-4hz-excit-8hz-inh" / "graph0_simulation_spikes.pckl"
 )
-path_graph = pathlib.Path(__file__).parent.parent / "graph0.graphml"
+path_graph = pathlib.Path(__file__).parent.parent / "simulations" / "100-neurons-4hz-excit-8hz-inh" / "graph0.graphml"
 
 G = nx.read_graphml(path_graph)
 connected = [
@@ -84,18 +84,21 @@ spikes_tsgroup = nap.TsGroup(
 
 # inspect ccgs
 crosscorrs = nap.compute_crosscorrelogram(
-    group=spikes_tsgroup, binsize=0.3, windowsize=14, time_units="ms"  # ms
+    group=spikes_tsgroup, binsize=0.2, windowsize=14, time_units="ms"  # ms
 )
 
-# for fignum in range(10):
-#     f, axs = plt.subplots(5, 4, figsize=(10, 8))
-#     for i, k in enumerate(connected[20*fignum:20*(fignum+1)]):
-#         row = i // 4
-#         col = i % 4
-#         ax = axs[row, col]
-#         ax.plot(crosscorrs[k])
-#     plt.show()
-
+for fignum in range(3):
+    f, axs = plt.subplots(5, 4, figsize=(10, 8))
+    for i, k in enumerate(connected[20*fignum:20*(fignum+1)]):
+        row = i // 4
+        col = i % 4
+        ax = axs[row, col]
+        ax.plot(crosscorrs[k])
+        ax.set_title(f"({i}{k})")
+        ax.set_xticks([])
+        ax.set_yticks([])
+    plt.show()
+plt.tight_layout()
 
 counts = spikes_tsgroup.count(binsize)
 basis = nmo.basis.RaisedCosineLogConv(4, window_size)
@@ -106,20 +109,21 @@ model = nmo.glm.GLM(
     regularizer_strength=10**-6,
     solver_kwargs={"tol": 10**-12},
 )
-model.fit(X, counts[:, 9])
+
+model.fit(X, counts[:, 10])
 
 rate = model.predict(X) / binsize
 
-# config.DISABLE_JIT=True
-aligned_rate = compute_perievent(rate, spikes_tsgroup[0], window_size)
-aligned_counts = compute_perievent(counts[:, 9], spikes_tsgroup[0], window_size)
+# # config.DISABLE_JIT=True
+aligned_rate = compute_perievent(rate, spikes_tsgroup[1], window_size)
+aligned_counts = compute_perievent(counts[:, 10], spikes_tsgroup[1], window_size)
 f, axs = plt.subplots(1, 1)
 axs.plot(aligned_rate.mean(axis=0))
 axs.plot(aligned_counts.mean(axis=0) / binsize)
 plt.show()
-# plt.plot(basis.evaluate_on_grid(window_size)[1].dot(model.coef_[:4]))
-# plt.show()
-
-nap.compute_perievent_continuous(
-    rate, spikes_tsgroup[9], minmax=(-14 * 0.001, 14 * 0.001), time_units="ms"
-)
+# # plt.plot(basis.evaluate_on_grid(window_size)[1].dot(model.coef_[:4]))
+# # plt.show()
+#
+# nap.compute_perievent_continuous(
+#     rate, spikes_tsgroup[9], minmax=(-14 * 0.001, 14 * 0.001), time_units="ms"
+# )
