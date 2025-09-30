@@ -25,6 +25,8 @@ def create_dsbatch_script() -> int:
     with open(disbatch_script_path, "w") as f:
         for config_file in path_to_config.iterdir():
             for dataset in simulations_dir.iterdir():
+                if dataset.suffix != ".pckl":
+                    continue
 
                 # Lines for loading the virtual environment
                 lines = [
