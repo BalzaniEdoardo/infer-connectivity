@@ -1,6 +1,6 @@
 from pathlib import Path
 
-fit_session_name = "sonica-sept-25-2026"
+fit_session_name = "sonica-sept-25-2025"
 base_dir = Path("/mnt/home/ebalzani/ceph/synaptic_connectivity/")
 script_dir = Path("/mnt/home/ebalzani/Code/infer-connectivity/scripts/hpc_fits")
 model_dir = base_dir / "models" / fit_session_name

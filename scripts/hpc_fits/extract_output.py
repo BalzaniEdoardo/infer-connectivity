@@ -164,11 +164,12 @@ def create_summary_stats(df: pd.DataFrame) -> pd.DataFrame:
     return summary
 
 
-def main():
+def main(output_subdir = "sonica-sept-25-2025", base_output_dir = "/mnt/home/ebalzani/ceph/synaptic_connectivity/outputs/"):
     """Main function to process results and save DataFrame."""
 
     # Set your output directory path here
-    output_dir = pathlib.Path("/mnt/home/ebalzani/ceph/synaptic_connectivity/outputs")
+    base_output_dir = pathlib.Path(base_output_dir)
+    output_dir = base_output_dir / output_subdir
 
     if not output_dir.exists():
         print(f"Error: Output directory does not exist: {output_dir}")
