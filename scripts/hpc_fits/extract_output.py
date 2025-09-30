@@ -57,6 +57,7 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
         regularizer = config.get('regularizer', 'Unknown')
         observation_model = config.get('observation_model', 'Unknown')
         basis_cls_name = config.get('basis_cls_name', 'Unknown')
+        enforce_ei = config.get('enforce_ei', False)
 
         # Extract CV scores
         best_score = float(cv_data['best_score'])
@@ -84,6 +85,7 @@ def collect_fit_results(output_dir: pathlib.Path) -> pd.DataFrame:
             'regularizer': regularizer,
             'observation_model': observation_model,
             'basis_cls_name': basis_cls_name,
+            "enforce_ei": enforce_ei,
 
             # Best model performance
             'best_test_score': best_score,

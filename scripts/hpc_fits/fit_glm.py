@@ -9,6 +9,147 @@ import nemos as nmo
 import numpy as np
 import pynapple as nap
 from sklearn.model_selection import GridSearchCV
+from copy import deepcopy
+
+class GLMEI(nmo.glm.GLM):
+    def __init__(
+            self,
+            # With python 3.11 Literal[*AVAILABLE_OBSERVATION_MODELS] will be allowed.
+            # Replace this manual list after dropping support for 3.10?
+            observation_model = "Poisson",
+            inverse_link_function = None,
+            regularizer = None,
+            regularizer_strength = None,
+            solver_name = None,
+            solver_kwargs = None,
+    ):
+        super().__init__(
+            observation_model = observation_model,
+            inverse_link_function = inverse_link_function,
+            regularizer = regularizer,
+            regularizer_strength = regularizer_strength,
+            solver_name = solver_name,
+            solver_kwargs = solver_kwargs,
+        )
+    @property
+    def solver_name(self) -> str:
+        return self._solver_name
+
+    @solver_name.setter
+    def solver_name(self, solver_name):
+        self._solver_name = solver_name
+
+    def instantiate_solver(
+        self, *args, solver_kwargs = None
+    ) -> "GLMEI":
+        """
+        Instantiate the solver with the provided loss function.
+
+        Instantiate the solver with the provided loss function, and store callable functions
+        that initialize the solver state, update the model parameters, and run the optimization
+        as attributes.
+
+        This method creates a solver instance from nemos.solvers or the jaxopt library, tailored to
+        the specific loss function and regularization approach defined by the Regularizer instance.
+        It also handles the proximal operator if required for the optimization method. The returned
+        functions are directly usable in optimization loops, simplifying the syntax by pre-setting
+        common arguments like regularization strength and other hyperparameters.
+
+        Parameters
+        ----------
+        *args:
+            Positional arguments for the jaxopt `solver.run` method, e.g. the regularizing
+            strength for proximal gradient methods.
+        solver_kwargs:
+            Optional dictionary with the solver kwargs.
+            If nothing is provided, it defaults to self.solver_kwargs.
+
+        Returns
+        -------
+        :
+            The instance itself for method chaining.
+        """
+        # only use penalized loss if not using proximal gradient descent
+        # In proximal method you must use the unpenalized loss independently
+        # of what regularizer you are using.
+        if self.solver_name not in ("ProximalGradient", "ProxSVRG"):
+            loss = self.regularizer.penalized_loss(
+                self._predict_and_compute_loss, self.regularizer_strength
+            )
+        else:
+            loss = self._predict_and_compute_loss
+
+        if solver_kwargs is None:
+            # copy dictionary of kwargs to avoid modifying user settings
+            solver_kwargs = deepcopy(self.solver_kwargs)
+
+        # check that the loss is Callable
+        nmo.utils.assert_is_callable(loss, "loss")
+
+        # some parsing to make sure solver gets instantiated properly
+        if self.solver_name in ("ProximalGradient", "ProxSVRG"):
+            if "prox" in self.solver_kwargs:
+                raise ValueError(
+                    "Proximal operator specification is not permitted. "
+                    "The proximal operator is automatically determined based on the selected regularizer. "
+                    "Please remove the 'prox' argument from the `solver_kwargs` "
+                )
+
+            solver_kwargs.update(prox=self.regularizer.get_proximal_operator())
+            # add self.regularizer_strength to args
+            args += (self.regularizer_strength,)
+
+        (
+            solver_run_kwargs,
+            solver_init_state_kwargs,
+            solver_update_kwargs,
+            solver_init_kwargs,
+        ) = self._inspect_solver_kwargs(solver_kwargs)
+
+        # instantiate the solver
+        solver = self._get_solver_class(self.solver_name)(
+            fun=loss, **solver_init_kwargs
+        )
+
+        self._solver_loss_fun = loss
+
+        def solver_run(
+            init_params, X=None, y=None
+        ):
+            return solver.run(init_params, hyperparams_proj=None, X=X, y=y, **solver_run_kwargs)
+
+        def solver_update(params, state, *run_args, **run_kwargs):
+            return solver.update(
+                params, state, hyperparams_proj=None, *args, *run_args, **solver_update_kwargs, **run_kwargs
+            )
+
+        def solver_init_state(params, *run_args, **run_kwargs):
+            return solver.init_state(
+                params,
+                *run_args,
+                **run_kwargs,
+                **solver_init_state_kwargs,
+            )
+
+        self._solver = solver
+        self._solver_init_state = solver_init_state
+        self._solver_update = solver_update
+        self._solver_run = solver_run
+        return self
+
+
+def projection_ei(x, inhib_mask, hyperparams=None):
+    del hyperparams
+    w, b = x
+    wp = jax.tree_util.tree_map(
+        lambda z: jax.numpy.where(
+            inhib_mask,
+            -jax.nn.relu(-w),   # Project to non-positive
+            jax.nn.relu(w)      # Project to non-negative
+        ),
+        w
+    )
+    return wp, b
 
 
 # Basic setup that prints to terminal
@@ -25,9 +166,14 @@ logger.info("Check logger...")
 
 jax.config.update("jax_enable_x64", True)
 
-conf_path = pathlib.Path(sys.argv[1])
-dataset_path = pathlib.Path(sys.argv[2])
-output_dir = pathlib.Path(sys.argv[3])
+try:
+    conf_path = pathlib.Path(sys.argv[1])
+    dataset_path = pathlib.Path(sys.argv[2])
+    output_dir = pathlib.Path(sys.argv[3])
+except IndexError:
+    conf_path = pathlib.Path("../configs/sonica-sept-25-2025/Lasso_Bernoulli_RaisedCosineLogConv_0_True.json")
+    dataset_path = pathlib.Path("../../simulations/sonica-sept-25-2025/spikes60s_bg.pckl")
+    output_dir = pathlib.Path("../outputs")
 
 logging.log(level=logging.INFO, msg=f"Fitting dataset: '{dataset_path}'.")
 
@@ -89,7 +235,15 @@ X = basis.compute_features(counts)
 
 logging.log(level=logging.INFO, msg="Computed design matrix.")
 
-model = nmo.glm.GLM(
+if conf_dict["enforce_ei"]:
+    if solver_name in ["Rige", "UnRegularized"]:
+        model_cls = GLMEI
+    else:
+        model_cls = nmo.glm.GLM
+else:
+    model_cls = nmo.glm.GLM
+
+model = model_cls(
     observation_model=observation_model,
     regularizer=regularizer,
     solver_name=solver_name,
@@ -105,6 +259,15 @@ if regularizer == "GroupLasso":
     model.regularizer.mask = mask
     logging.log(level=logging.INFO, msg="Mask setup successfully.")
 
+if conf_dict["enforce_ei"]:
+    inhibitory_neu_id = jax.numpy.asarray(conf_dict["inhibitory_neuron_id"])
+    inhib_mask = jax.numpy.zeros(counts.shape[1], dtype=bool)
+    inhib_mask = inhib_mask.at[inhibitory_neu_id].set(True)
+    inhib_mask = jax.numpy.repeat(inhib_mask, basis.n_basis_funcs)
+    enforce_ei_proj = lambda x, hyperparams=None: projection_ei(x, inhib_mask, hyperparams=hyperparams)
+    if isinstance(model, GLMEI):
+        model._solver_name = "ProjectedGradient"
+    model.solver_kwargs.update({"projection": enforce_ei_proj})
 
 
 logging.log(level=logging.INFO, msg="Start model fitting...")
