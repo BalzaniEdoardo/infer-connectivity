@@ -17,7 +17,6 @@ class GLMEI(nmo.glm.GLM):
             # With python 3.11 Literal[*AVAILABLE_OBSERVATION_MODELS] will be allowed.
             # Replace this manual list after dropping support for 3.10?
             observation_model = "Poisson",
-            inverse_link_function = None,
             regularizer = None,
             regularizer_strength = None,
             solver_name = None,
@@ -25,7 +24,6 @@ class GLMEI(nmo.glm.GLM):
     ):
         super().__init__(
             observation_model = observation_model,
-            inverse_link_function = inverse_link_function,
             regularizer = regularizer,
             regularizer_strength = regularizer_strength,
             solver_name = solver_name,
