@@ -15,6 +15,9 @@ class GLMEI(nmo.glm.GLM):
         solver_name=None,
         solver_kwargs=None,
     ):
+        if solver_name is None:
+            solver_name = "ProjectedGradient"
+
         super().__init__(
             observation_model=observation_model,
             regularizer=regularizer,
