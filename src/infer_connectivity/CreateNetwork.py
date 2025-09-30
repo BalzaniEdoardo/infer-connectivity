@@ -3,10 +3,12 @@
 # Modularized for use as importable functions
 
 from __future__ import division
-from scipy import stats
-import networkx as nx
+
 import random
+
+import networkx as nx
 import numpy as np
+from scipy import stats
 
 
 def GenerateEdgeSet(N_E, N_I, m_EE, m_EI, m_IE, m_II, r):
@@ -106,11 +108,11 @@ def CreateGraph(N_E, N_I, EdgeSet):
     gEDict = {k: random.random() / 769 for k in range(N_E + N_I)}
     gIDict = {k: random.random() / 769 for k in range(N_E + N_I)}
 
-    nx.set_node_attributes(G, voltDict, 'voltage')
-    nx.set_node_attributes(G, gEDict, 'g_E')
-    nx.set_node_attributes(G, gIDict, 'g_I')
-    nx.set_node_attributes(G, 0, 'refractory_left')
-    nx.set_node_attributes(G, 0, 'spike_count')
+    nx.set_node_attributes(G, voltDict, "voltage")
+    nx.set_node_attributes(G, gEDict, "g_E")
+    nx.set_node_attributes(G, gIDict, "g_I")
+    nx.set_node_attributes(G, 0, "refractory_left")
+    nx.set_node_attributes(G, 0, "spike_count")
 
     G.add_edges_from(EdgeSet)
     return G
@@ -148,21 +150,23 @@ def get_network_stats(G, N_E):
         Dictionary containing network statistics
     """
     stats = {
-        'total_nodes': G.number_of_nodes(),
-        'total_edges': G.number_of_edges(),
-        'excitatory_nodes': N_E,
-        'inhibitory_nodes': G.number_of_nodes() - N_E,
+        "total_nodes": G.number_of_nodes(),
+        "total_edges": G.number_of_edges(),
+        "excitatory_nodes": N_E,
+        "inhibitory_nodes": G.number_of_nodes() - N_E,
     }
 
     in_degrees = [G.in_degree(n) for n in G.nodes()]
     out_degrees = [G.out_degree(n) for n in G.nodes()]
 
-    stats.update({
-        'avg_in_degree': np.mean(in_degrees),
-        'std_in_degree': np.std(in_degrees),
-        'avg_out_degree': np.mean(out_degrees),
-        'std_out_degree': np.std(out_degrees),
-        'avg_degree': G.number_of_edges() * 2 / G.number_of_nodes()
-    })
+    stats.update(
+        {
+            "avg_in_degree": np.mean(in_degrees),
+            "std_in_degree": np.std(in_degrees),
+            "avg_out_degree": np.mean(out_degrees),
+            "std_out_degree": np.std(out_degrees),
+            "avg_degree": G.number_of_edges() * 2 / G.number_of_nodes(),
+        }
+    )
 
     return stats
