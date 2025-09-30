@@ -236,10 +236,7 @@ X = basis.compute_features(counts)
 logging.log(level=logging.INFO, msg="Computed design matrix.")
 
 if conf_dict["enforce_ei"]:
-    if solver_name in ["Rige", "UnRegularized"]:
-        model_cls = GLMEI
-    else:
-        model_cls = nmo.glm.GLM
+    model_cls = GLMEI
 else:
     model_cls = nmo.glm.GLM
 
