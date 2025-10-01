@@ -25,8 +25,10 @@ def create_dsbatch_script() -> int:
     with open(disbatch_script_path, "w") as f:
         for config_file in path_to_config.iterdir():
             if not config_file.is_file():
+                print("skipping", config_file.name, "not a file")
                 continue
             if not config_file.suffix != ".json":
+                print("skipping", config_file.name, "not a json")
                 continue
             for dataset in simulations_dir.iterdir():
                 if dataset.suffix != ".pckl":
