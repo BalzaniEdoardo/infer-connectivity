@@ -45,6 +45,7 @@ for reg, obs, bas, neu, ei in pars:
                 output_dir
                 / f"best_model_{dataset_path.stem}_neuron_{neu}_config_{conf_path.stem}.npz"
         )
+        print(conf_path)
     model = ic.load_model(model_path)
     pop_models[reg, obs, ei][neu] = model.coef_
 
