@@ -31,7 +31,8 @@ for reg, obs, ei in itertools.product(regularizers, observation_model, enforce_e
     pop_models[reg, obs, ei] = np.zeros((len(neuron_id), len(neuron_id)*n_basis_funcs))
 
 for reg, obs, bas, neu, ei in pars:
-    if enforce_ei:
+    print(reg, obs, neu, ei)
+    if ei:
         conf_path = base_dir / f"{reg}_{obs}_{bas}_{neu}_{ei}.json"
         model_path = (
                 output_dir
