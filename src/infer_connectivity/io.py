@@ -13,9 +13,18 @@ from nemos.io.io import (
     _split_model_params,
     _suggest_keys,
     _unflatten_dict,
+    AVAILABLE_REGULARIZERS
 )
+from nemos._regularizer_builder import _REGULARIZER_MAP
 
 from .ei_glm import GLMEI
+from.regularizer import RidgeMultiRegularization, LassoMultiRegularization
+
+
+_REGULARIZER_MAP.update({"RidgeMultiRegularization": RidgeMultiRegularization,
+                         "LassoMultiRegularization": LassoMultiRegularization})
+
+AVAILABLE_REGULARIZERS.extend(["RidgeMultiRegularization", "LassoMultiRegularization"])
 
 MODEL_REGISTRY.update({"infer_connectivity.ei_glm.GLMEI": GLMEI})
 

@@ -4,7 +4,7 @@ from itertools import product
 import json
 import pathlib
 
-conf_dirname = "sonica-sept-25-2025"
+conf_dirname = "ei-cv-sonica-sept-25-2025"
 base_dir = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/configs") / conf_dirname
 if not base_dir.exists():
     print("base_dir NOT FOUND")
@@ -12,8 +12,8 @@ if not base_dir.exists():
 
 base_dir.mkdir(exist_ok=True, parents=True)
 
-enforce_ei = [True]
-regularizers = ["UnRegularized", "Ridge",]
+enforce_ei = [False]
+regularizers = ["UnRegularized", "Ridge", "Lasso", "GroupLasso"]
 observation_model = ["Bernoulli", "Poisson"]
 basis_class_name = ["RaisedCosineLogConv"]
 neuron_id = range(400)

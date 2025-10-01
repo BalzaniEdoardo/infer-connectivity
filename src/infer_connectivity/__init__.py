@@ -15,3 +15,4 @@ from .Simulatenew2 import (
     trackVoltage,
 )
 from .visualizations import visualize_connectivity_matrix
+from .regularizer import RidgeMultiRegularization
