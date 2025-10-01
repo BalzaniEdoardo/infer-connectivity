@@ -24,6 +24,10 @@ def create_dsbatch_script() -> int:
     tot_datasets = 0
     with open(disbatch_script_path, "w") as f:
         for config_file in path_to_config.iterdir():
+            if not config_file.is_file():
+                continue
+            if not config_file.suffix != ".json":
+                continue
             for dataset in simulations_dir.iterdir():
                 if dataset.suffix != ".pckl":
                     continue
@@ -56,7 +60,7 @@ def run_experiment():
     print(
         "module load disBatch; "
         "mkdir disbatch_logs; "
-        f"sbatch -n {num_jobs} -p gpu --gpus-per-task=1 -t 0-12 --mem-per-cpu=16GB -c 6 disBatch -p disbatch_logs/ {disbatch_script_path}"
+        f"sbatch -n {num_jobs} -p gpu --gpus-per-task=1 -t 0-36 --mem-per-cpu=16GB -c 6 disBatch -p disbatch_logs/ {disbatch_script_path}"
     )
 
 

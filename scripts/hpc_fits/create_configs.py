@@ -31,3 +31,4 @@ for reg, obs, bas, neu, ei in pars:
     )
     with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}.json", "w") as f:
         json.dump(conf_dict, f)
+
