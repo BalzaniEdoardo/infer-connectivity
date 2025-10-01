@@ -102,13 +102,13 @@ fig, axs = plt.subplots(1, 1, figsize=(10, 8))
 for k, ((reg, obs, ei), (fpr, tpr, roc_auc, ap, pred_conn)) in enumerate(results_roc.items()):
     # ROC curves'
     ei_label = "-ei" if ei else ""
-    axs[0].plot(
+    axs.plot(
         fpr, tpr, label=f"{reg}-{obs}{ei_label}(AUC = {roc_auc:.2f})", c=GRADED_COLOR_LIST[k]
     )
-axs[0].plot([0, 1], [0, 1], "k--")
-axs[0].set_xlabel("False Positives")
-axs[0].set_ylabel("True Positives")
-axs[0].legend()
-axs[0].set_title("ROC Curves")
+axs.plot([0, 1], [0, 1], "k--")
+axs.set_xlabel("False Positives")
+axs.set_ylabel("True Positives")
+axs.legend()
+axs.set_title("ROC Curves")
 
 plt.show()

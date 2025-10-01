@@ -6,14 +6,14 @@ import numpy as np
 import pickle
 
 
-regularizers = ["Ridge", "Lasso", "GroupLasso", "UnRegularized"]
+regularizers = ["LassoMultiRegularization","RidgeMultiRegularization", "GroupLassoMultiRegularization"]#["Ridge", "Lasso", "GroupLasso", "UnRegularized"]
 observation_model = ["Bernoulli", "Poisson"]
 basis_class_name = ["RaisedCosineLogConv"]
 neuron_id = range(400)
 n_basis_funcs = 4
-enforce_ei = [False, True]
+enforce_ei = [False]#[False, True]
 
-sim_dirname = "sonica-sept-25-2025"
+sim_dirname = "ei-cv-sonica-sept-25-2025"
 pars = itertools.product(regularizers, observation_model, basis_class_name, neuron_id, enforce_ei)
 
 
@@ -30,7 +30,7 @@ pop_models = {}
 
 for reg, obs, bas, neu, ei in pars:
     print(reg, obs, neu, ei)
-    if ei:
+    if ei is not None:
         conf_path = base_dir / f"{reg}_{obs}_{bas}_{neu}_{ei}.json"
         model_path = (
                 output_dir
@@ -51,7 +51,7 @@ for reg, obs, bas, neu, ei in pars:
 
     if (reg, obs, ei) not in pop_models:
         print("initialize", reg, obs, ei)
-        pop_models[reg, obs, ei] = np.zeros((len(neuron_id), len(neuron_id) * n_basis_funcs))
+        pop_models[reg, obs, ei] = np.full((len(neuron_id), len(neuron_id) * n_basis_funcs), np.nan)
 
     model = ic.load_model(model_path)
     pop_models[reg, obs, ei][neu] = model.coef_
