@@ -27,8 +27,6 @@ coeff_save_dir.mkdir(exist_ok=True, parents=True)
 coeff_save_path = coeff_save_dir / "pop_coefficients.pckl"
 
 pop_models = {}
-for reg, obs, ei in itertools.product(regularizers, observation_model, enforce_ei):
-    pop_models[reg, obs, ei] = np.zeros((len(neuron_id), len(neuron_id)*n_basis_funcs))
 
 for reg, obs, bas, neu, ei in pars:
     print(reg, obs, neu, ei)
@@ -45,7 +43,16 @@ for reg, obs, bas, neu, ei in pars:
                 output_dir
                 / f"best_model_{dataset_path.stem}_neuron_{neu}_config_{conf_path.stem}.npz"
         )
-        print(conf_path)
+
+
+    if not model_path.exists():
+        print(model_path, "not found")
+        continue
+
+    if (reg, obs, ei) not in pop_models:
+        print("initialize", reg, obs, ei)
+        pop_models[reg, obs, ei] = np.zeros((len(neuron_id), len(neuron_id) * n_basis_funcs))
+
     model = ic.load_model(model_path)
     pop_models[reg, obs, ei][neu] = model.coef_
 
