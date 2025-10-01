@@ -76,6 +76,9 @@ class LassoMultiRegularization(MultiRegularization, Lasso):
             lambda x: l1_penalty(x, params[1]), sum, params[0]
         )
 
-def GroupLassoMultiRegularization(MultiRegularization, GroupLasso):
+class GroupLassoMultiRegularization(MultiRegularization, GroupLasso):
+    def __init__(self, mask=None):
+        super().__init__(mask=mask)
+
     def penalized_loss(self, **kwargs):
         raise NotImplementedError("Not implemented for GroupLasso.")
