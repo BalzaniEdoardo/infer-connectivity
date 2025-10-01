@@ -130,7 +130,9 @@ def save_connectivity_matrix(G, filepath):
         Path to save the matrix (without .npy extension)
     """
     connectivity_matrix = nx.adjacency_matrix(G).todense()
-    np.save(f"{filepath}.npy", connectivity_matrix)
+    if not filepath.endswith(".npy"):
+        filepath = filepath + ".npy"
+    np.save(filepath, connectivity_matrix)
 
 
 def get_network_stats(G, N_E):
