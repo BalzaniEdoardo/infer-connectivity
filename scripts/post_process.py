@@ -70,6 +70,7 @@ def compute_filters(weights, basis, window_size):
 
 base_dir = Path("/Users/ebalzani/Code/infer-connectivity/infer-connectivity/")
 graph_file = base_dir / "simulations/sonica-sept-25-2025/graph0-sonica-sept-26-2026.graphml"
+fit_id = "ei-cv-sonica-sept-25-2025"
 
 # get true connectivity
 conn_matrix_file = graph_file.parent / (graph_file.stem + "_connectivity.npy")
@@ -80,7 +81,7 @@ true_conn = np.load(conn_matrix_file)
 true_conn += np.eye(true_conn.shape[0], dtype=int)
 
 # get pop cooef
-with open("/Users/ebalzani/Code/infer-connectivity/infer-connectivity/best_model_aggregate_coeff/sonica-sept-25-2025/pop_coefficients.pckl", "rb") as f:
+with open(base_dir / "best_model_aggregate_coeff" / fit_id / "pop_coefficients.pckl", "rb") as f:
     pop_coef_dict = pickle.load(f)
 
 binsize = 0.0003
@@ -91,9 +92,17 @@ basis = nmo.basis.RaisedCosineLogConv(4, window_size=window_size)
 
 results_roc = {}
 for (reg, obs, ei), coeffs in pop_coef_dict.items():
+    is_fit = ~np.isnan(coeffs.sum(axis=1))
+    n_fit = sum(is_fit)
+    coeffs = coeffs[is_fit]
+    true_conn_fit = true_conn[is_fit]
+
     print(reg, obs, ei)
-    filters = compute_filters(coeffs.reshape(400, -1, 400), basis, window_size)
-    fpr, tpr, roc_auc, ap, pred_conn = compute_roc_curve(true_conn.reshape(filters.shape[0]**2,-1), filters.reshape(filters.shape[0]**2,-1))
+    filters = compute_filters(coeffs.reshape(n_fit, -1, 400), basis, window_size)
+    fpr, tpr, roc_auc, ap, pred_conn = compute_roc_curve(
+        true_conn_fit.reshape(n_fit*true_conn.shape[0],-1),
+        filters.reshape(n_fit*true_conn.shape[0], window_size)
+    )
     results_roc[reg, obs, ei] =  fpr, tpr, roc_auc, ap, pred_conn
 
 
