@@ -13,7 +13,7 @@ neuron_id = range(400)
 n_basis_funcs = 4
 enforce_ei = [False, True]
 
-sim_dirname = "ei-cv-sonica-sept-25-2025"
+sim_dirname = "sonica-sept-25-2025"
 pars = itertools.product(regularizers, observation_model, basis_class_name, neuron_id, enforce_ei)
 
 
