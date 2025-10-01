@@ -13,7 +13,7 @@ if not base_dir.exists():
 base_dir.mkdir(exist_ok=True, parents=True)
 
 enforce_ei = [False]
-regularizers = ["UnRegularized", "Ridge", "Lasso", "GroupLasso"]
+regularizers = ["RidgeMultiRegularization", "LassoMultiRegularization", "GroupLassoMultiRegularization"]
 observation_model = ["Bernoulli", "Poisson"]
 basis_class_name = ["RaisedCosineLogConv"]
 neuron_id = range(400)
