@@ -128,12 +128,20 @@ logging.log(level=logging.INFO, msg="Start model fitting...")
 n_coeff = X.shape[1]
 
 inhibitory_neu_id = jax.numpy.asarray(conf_dict["inhibitory_neuron_id"], dtype=int)
-excitatory_neu_id = jax.numpy.asarray(list(set(range(400)).difference(inhibitory_neu_id.tolist())), dtype=int)
+excitatory_neu_id = jax.numpy.asarray(list(set(range(counts.shape[1])).difference(inhibitory_neu_id.tolist())), dtype=int)
 one_dim_param = jax.numpy.geomspace(10**-8, 10**-3, 8)
-reg_str = jax.numpy.ones((one_dim_param.shape[0]**2, n_coeff), dtype=float)
+
+reg_str = jax.numpy.ones((one_dim_param.shape[0] ** 2, counts.shape[1]), dtype=float)
 for i, (reg1, reg2) in enumerate(itertools.product(one_dim_param, one_dim_param)):
     reg_str = reg_str.at[i, inhibitory_neu_id].set(reg1)
     reg_str = reg_str.at[i, excitatory_neu_id].set(reg2)
+
+
+if regularizer in ["GroupLassoMultiRegularization"]:
+    pass
+else:
+    reg_str = jax.numpy.repeat(reg_str, basis.n_basis_funcs, axis=1)
+
 
 param_grid = {
     "regularizer_strength": (
