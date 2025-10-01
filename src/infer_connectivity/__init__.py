@@ -15,4 +15,10 @@ from .Simulatenew2 import (
     trackVoltage,
 )
 from .visualizations import visualize_connectivity_matrix
-from .regularizer import RidgeMultiRegularization
+from .regularizer import RidgeMultiRegularization, LassoMultiRegularization
+from nemos._regularizer_builder import _REGULARIZER_MAP, AVAILABLE_REGULARIZERS
+
+
+_REGULARIZER_MAP.update({"RidgeMultiRegularization": RidgeMultiRegularization,
+                        "LassoMultiRegularization": LassoMultiRegularization})
+AVAILABLE_REGULARIZERS.extend(["RidgeMultiRegularization", "LassoMultiRegularization"])
