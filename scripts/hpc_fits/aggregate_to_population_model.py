@@ -24,7 +24,7 @@ output_dir = base_dir/ "outputs" / sim_dirname
 
 coeff_save_dir = base_dir/ "best_model_aggregate_coeff" / sim_dirname
 coeff_save_dir.mkdir(exist_ok=True, parents=True)
-coeff_save_path = coeff_save_dir / "pop_coefficients.npz"
+coeff_save_path = coeff_save_dir / "pop_coefficients.pckl"
 
 pop_models = {}
 for reg, obs, ei in itertools.product(regularizers, observation_model, enforce_ei):
@@ -47,8 +47,8 @@ for reg, obs, bas, neu, ei in pars:
     model = ic.load_model(model_path)
     pop_models[reg, obs, ei][neu] = model.coef_
 
-
-np.savez(coeff_save_path, pop_models)
+with open(coeff_save_path, "wb") as fh:
+    pickle.dump(pop_models, fh)
 
 
 
