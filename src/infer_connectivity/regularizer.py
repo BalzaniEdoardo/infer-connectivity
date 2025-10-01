@@ -1,4 +1,4 @@
-from nemos.regularizer import Ridge, Lasso
+from nemos.regularizer import Ridge, Lasso, GroupLasso
 from typing import Union, Tuple
 from nemos.typing import DESIGN_INPUT_TYPE
 from nemos import tree_utils
@@ -75,3 +75,7 @@ class LassoMultiRegularization(MultiRegularization, Lasso):
         return tree_utils.pytree_map_and_reduce(
             lambda x: l1_penalty(x, params[1]), sum, params[0]
         )
+
+def GroupLassoMultiRegularization(MultiRegularization, GroupLasso):
+    def penalized_loss(self, **kwargs):
+        raise NotImplementedError("Not implemented for GroupLasso.")

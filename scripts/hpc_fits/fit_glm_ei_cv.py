@@ -105,7 +105,7 @@ model = model_cls(
 )
 
 # set up mask for group lasso
-if regularizer == "GroupLasso":
+if regularizer in ["GroupLasso", "GroupLassoMultiRegularization"]:
     logging.log(level=logging.INFO, msg="Preparing mask for group lasso.")
     mask = np.eye(len(spikes_tsgroup), dtype=float)
     mask = np.repeat(mask, basis.n_basis_funcs, axis=1)
