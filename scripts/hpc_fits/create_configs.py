@@ -8,6 +8,10 @@ conf_dirname = "sonica-oct-8-2025-400-seconds"
 base_dir = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/configs") / conf_dirname
 connectivity_path = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/simulations/") / conf_dirname
 
+print("conf dirname:")
+print(conf_dirname)
+print("bas dirname:")
+print(base_dir)
 conn_file_name = None
 for fhname in connectivity_path.iterdir():
     if fhname.suffix == ".npy" and fhname.name.startswith("graph"):
