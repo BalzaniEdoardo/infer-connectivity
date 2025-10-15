@@ -10,6 +10,7 @@ import pickle
 import sys
 
 import jax
+jax.config.update("jax_enable_x64", False)
 import nemos as nmo
 import numpy as np
 import pynapple as nap
@@ -30,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.info("Check logger...")
 
-jax.config.update("jax_enable_x64", True)
+
 
 try:
     conf_path = pathlib.Path(sys.argv[1])
