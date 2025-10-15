@@ -4,8 +4,21 @@ from itertools import product
 import json
 import pathlib
 
+from scripts.hpc_fits.fit_no_cv import connectivity_path
+
 conf_dirname = "ei-cv-sonica-sept-25-2025"
 base_dir = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/configs") / conf_dirname
+connectivity_path = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/simulations/") / conf_dirname
+
+conn_file_name = None
+for fhname in connectivity_path.iterdir():
+    if fhname.suffix == ".npy" and fhname.name.startswith("graph"):
+        conn_file_name = fhname
+if conn_file_name is None:
+    raise FileNotFoundError("Unable to locate connectivity matrix.")
+else:
+    connectivity_path = conn_file_name
+
 if not base_dir.exists():
     print("base_dir NOT FOUND")
     base_dir = pathlib.Path("../configs") / conf_dirname
@@ -13,8 +26,8 @@ if not base_dir.exists():
 base_dir.mkdir(exist_ok=True, parents=True)
 
 enforce_ei = [False]
-regularizers = ["RidgeMultiRegularization", "LassoMultiRegularization", "GroupLassoMultiRegularization"]
-observation_model = ["Bernoulli", "Poisson"]
+regularizers = ["Lasso"]
+observation_model = ["Bernoulli"]
 basis_class_name = ["RaisedCosineLogConv"]
 neuron_id = range(400)
 inhibitory_neu_id = list(range(300, 400))
@@ -28,6 +41,7 @@ for reg, obs, bas, neu, ei in pars:
         neuron_id=neu,
         inhibitory_neuron_id=inhibitory_neu_id,
         enforce_ei = ei,
+        connectivity_path=connectivity_path.as_posix(),
     )
     with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}.json", "w") as f:
         json.dump(conf_dict, f)
