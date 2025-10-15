@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "nemos",
+    "nemos @ https://github.com/flatironinstitute/nemos.git@development",
     "matplotlib>=3.7",
     "networkx",
     "click"
