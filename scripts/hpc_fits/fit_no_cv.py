@@ -1,7 +1,7 @@
 import os
 os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 os.environ['XLA_PYTHON_CLIENT_MEM_FRACTION'] = '0.75'  # Use only 75% of GPU memory
-
+os.environ['XLA_FLAGS'] = '--xla_gpu_strict_conv_algorithm_picker=false'
 
 import json
 import logging
