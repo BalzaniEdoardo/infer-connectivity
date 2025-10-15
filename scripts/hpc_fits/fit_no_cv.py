@@ -38,7 +38,7 @@ try:
     dataset_path = pathlib.Path(sys.argv[2])
     output_dir = pathlib.Path(sys.argv[3])
 except IndexError:
-    conf_path = pathlib.Path("../configs/sonica-sept-25-2025/Lasso_Bernoulli_RaisedCosineLogConv_0_True.json")
+    conf_path = pathlib.Path("../configs/sonica-oct-8-2025-400-seconds/Lasso_Bernoulli_RaisedCosineLogConv_0_True.json")
     dataset_path = pathlib.Path("../../simulations/sonica-oct-8-2025-400-seconds/spikes_400_neur_400_sec.pckl")
     output_dir = pathlib.Path("../outputs")
 
