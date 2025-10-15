@@ -4,8 +4,6 @@ from itertools import product
 import json
 import pathlib
 
-from scripts.hpc_fits.fit_no_cv import connectivity_path
-
 conf_dirname = "ei-cv-sonica-sept-25-2025"
 base_dir = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/configs") / conf_dirname
 connectivity_path = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/simulations/") / conf_dirname
