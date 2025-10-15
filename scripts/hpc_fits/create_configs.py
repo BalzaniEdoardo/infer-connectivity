@@ -4,7 +4,7 @@ from itertools import product
 import json
 import pathlib
 
-conf_dirname = "ei-cv-sonica-sept-25-2025"
+conf_dirname = "sonica-oct-8-2025-400-seconds"
 base_dir = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/configs") / conf_dirname
 connectivity_path = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/simulations/") / conf_dirname
 
