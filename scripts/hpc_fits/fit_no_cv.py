@@ -1,3 +1,8 @@
+import os
+os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
+os.environ['XLA_PYTHON_CLIENT_MEM_FRACTION'] = '0.75'  # Use only 75% of GPU memory
+
+
 import json
 import logging
 import pathlib
@@ -11,6 +16,7 @@ import pynapple as nap
 from sklearn.model_selection import GridSearchCV
 from infer_connectivity import GLMEI, projection_ei
 from infer_connectivity.roc_utils import compute_filters, compute_roc_curve
+
 
 # Basic setup that prints to terminal
 logging.basicConfig(
