@@ -95,9 +95,9 @@ basis = basis_cls(n_basis_funcs, window_size)
 logging.log(level=logging.INFO, msg="Defined basis.")
 
 X = basis.compute_features(counts)
-jax.config.update("jax_enable_x64", True)
-X = X.d.astype(np.float64)
-counts = counts.d.astype(np.float64)
+# jax.config.update("jax_enable_x64", True)
+# X = X.d.astype(np.float64)
+# counts = counts.d.astype(np.float64)
 
 # # cut to 5% data
 # use_n = int(X.shape[0] * 0.05)
