@@ -100,9 +100,9 @@ X = X.d.astype(np.float64)
 counts = counts.d.astype(np.float64)
 
 # # cut to 5% data
-use_n = int(X.shape[0] * 0.05)
-X = X[:use_n]
-counts = counts[:use_n]
+# use_n = int(X.shape[0] * 0.05)
+# X = X[:use_n]
+# counts = counts[:use_n]
 
 logging.log(level=logging.INFO, msg="Computed design matrix.")
 
