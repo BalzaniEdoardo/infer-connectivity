@@ -169,7 +169,7 @@ for reg_str in param_grid["regularizer_strength"]:
     current_model.fit(X, counts[:, neuron_fit])
 
     # Compute response filters, shape [input, 1, time]
-    filters = compute_filters(current_model.coef_, basis, window_size)
+    filters = compute_filters(current_model.coef_, basis)
 
     # Compute ROC metrics
     fpr, tpr, roc_auc, ap, pred_conn, best_f1 = compute_roc_curve(true_conn[:, neuron_fit], filters)

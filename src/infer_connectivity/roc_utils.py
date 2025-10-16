@@ -52,9 +52,9 @@ def compute_roc_curve(true_conn, filters):
     return fpr, tpr, roc_auc, ap, pred_conn, best_f1
 
 
-def compute_filters(weights, basis, window_size):
+def compute_filters(weights, basis):
     """Weights from GLM.coef_ or PopulationGLM.coef_"""
-    kernels = basis.evaluate_on_grid(window_size)[1]
+    kernels = basis.evaluate_on_grid(basis.window_size)[1]
     if weights.ndim == 1:
         # single neuron glm, [input, n_basis]
         weights = weights.reshape( -1, basis.n_basis_funcs)
