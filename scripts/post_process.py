@@ -5,6 +5,8 @@ import warnings
 
 import nemos as nmo
 import re
+import pandas as pd
+import seaborn as sns
 
 os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
 os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"] = "platform"
@@ -66,7 +68,7 @@ def extract_coef_single_neu_glm(output_dir: str | pathlib.Path, pattern=None):
         if found is not None:
             neu_ids.append(int(found.group(1)))
     neu_ids = sorted(neu_ids)
-
+    reg_strengths = np.full(len(neu_ids), np.nan)
     coef = None
     for fh in output_dir.iterdir():
         found = re.search(pattern, fh.name)
@@ -76,7 +78,8 @@ def extract_coef_single_neu_glm(output_dir: str | pathlib.Path, pattern=None):
             if coef is None:
                 coef = np.zeros((*model.coef_.shape, len(neu_ids)))
             coef[..., neu_ids.index(neu)] = model.coef_
-    return np.array(neu_ids), coef
+            reg_strengths[neu_ids.index(neu)] = model.regularizer_strength
+    return np.array(neu_ids), coef, reg_strengths
 
 
 # Parameters for processing
@@ -102,7 +105,7 @@ basis_cls_name = conf_dict["basis_cls_name"]
 
 basis_cls = getattr(nmo.basis, basis_cls_name)
 basis = basis_cls(n_basis_funcs, window_size=window_size)
-neu_id, coef_pop = extract_coef_single_neu_glm(output_directory)
+neu_id, coef_pop, reg_strengths = extract_coef_single_neu_glm(output_directory)
 filters = compute_filters(coef_pop, basis)
 
 # extract connectivity
@@ -112,6 +115,7 @@ true_conn += np.eye(true_conn.shape[0], dtype=int)
 
 
 fpr, tpr, roc_auc, ap, pred_conn, best_f1 = compute_roc_curve(true_conn, filters)
+
 
 
 
@@ -142,5 +146,34 @@ delta[delta == 0] = np.nan
 plt.title("Delta")
 plt.pcolormesh(delta, cmap="Spectral")
 plt.tight_layout()
+plt.show()
 
+
+
+df = pd.DataFrame()
+df["neuron"] = neu_id
+df["type"] = ["E"] * 300 + ["I"] * 100
+df["regularizer_strength"] = reg_strengths
+# Assuming your dataframe is called 'df'
+sns.set_style("whitegrid")
+
+# Convert regularizer_strength to string for better x-axis labels, keeping sort order
+df = df.sort_values('regularizer_strength')
+df['reg_str_label'] = df['regularizer_strength'].apply(lambda x: f'{x:.2e}')
+
+# Calculate proportions within each type
+prop_df = df.groupby(['reg_str_label', 'type']).size().reset_index(name='count')
+totals = df.groupby('type').size()
+prop_df['proportion'] = prop_df.apply(lambda row: row['count'] / totals[row['type']], axis=1)
+
+# Create the plot
+plt.figure(figsize=(12, 6))
+sns.barplot(data=prop_df, x='reg_str_label', y='proportion', hue='type',
+            palette={'E': '#3b82f6', 'I': '#ef4444'},
+            order=sorted(prop_df['reg_str_label'].unique(), key=lambda x: float(x)))
+plt.xlabel('Regularizer Strength')
+plt.ylabel('Proportion')
+plt.title('Normalized Distribution of Regularizer Strength by Neuron Type')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
 plt.show()

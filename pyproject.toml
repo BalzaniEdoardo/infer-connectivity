@@ -24,7 +24,8 @@ dependencies = [
     "nemos @ git+https://github.com/flatironinstitute/nemos.git@development",
     "matplotlib>=3.7",
     "networkx",
-    "click"
+    "click",
+    "seaborn",
 ]
 
 # Optional dependencies for documentation [docs] and testing/linting [dev]:
