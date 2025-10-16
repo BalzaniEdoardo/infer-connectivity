@@ -8,6 +8,14 @@ conf_dirname = "sonica-oct-8-2025-400-seconds"
 base_dir = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/configs") / conf_dirname
 connectivity_path = pathlib.Path("/mnt/ceph/users/ebalzani/synaptic_connectivity/simulations/") / conf_dirname
 
+
+# Parameters for processing
+binsize = 0.0003
+history_window = 0.014
+n_basis_funcs = 4
+
+
+
 print("conf dirname:")
 print(conf_dirname)
 print("bas dirname:")
@@ -44,6 +52,10 @@ for reg, obs, bas, neu, ei in pars:
         inhibitory_neuron_id=inhibitory_neu_id,
         enforce_ei = ei,
         connectivity_path=connectivity_path.as_posix(),
+        binsize=binsize,
+        history_window=history_window,
+        n_basis_funcs=n_basis_funcs,
+
     )
     with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}.json", "w") as f:
         json.dump(conf_dict, f)

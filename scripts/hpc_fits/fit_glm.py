@@ -59,10 +59,10 @@ spikes_tsgroup = nap.TsGroup(
 logging.log(level=logging.INFO, msg="Loaded simulated spikes into pynapple.")
 
 # Parameters for processing
-binsize = 0.0003
-history_window = 0.014
+binsize = conf_dict["binsize"]
+history_window = conf_dict["history_window"]
 window_size = int(history_window / binsize)
-n_basis_funcs = 4
+n_basis_funcs = conf_dict["n_basis_funcs"]
 
 
 # Fit Hyperparameters

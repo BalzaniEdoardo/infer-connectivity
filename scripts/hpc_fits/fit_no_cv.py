@@ -1,4 +1,7 @@
 import os
+
+from scripts.hpc_fits.create_configs import conf_dict
+
 os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 os.environ['XLA_PYTHON_CLIENT_MEM_FRACTION'] = '0.75'  # Use only 75% of GPU memory
 os.environ['XLA_FLAGS'] = '--xla_gpu_strict_conv_algorithm_picker=false'
@@ -67,10 +70,10 @@ spikes_tsgroup = nap.TsGroup(
 logging.log(level=logging.INFO, msg="Loaded simulated spikes into pynapple.")
 
 # Parameters for processing
-binsize = 0.0003
-history_window = 0.014
+binsize = conf_dict["binsize"]
+history_window = conf_dict["history_window"]
 window_size = int(history_window / binsize)
-n_basis_funcs = 4
+n_basis_funcs = conf_dict["n_basis_funcs"]
 
 
 # Fit Hyperparameters
