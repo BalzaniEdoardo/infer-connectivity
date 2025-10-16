@@ -128,3 +128,19 @@ axs.legend()
 axs.set_title("ROC Curves")
 
 plt.show()
+
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 3 ,1)
+plt.title("True connectivity")
+plt.pcolormesh(true_conn)
+plt.subplot(1, 3 ,2)
+plt.title("Predicted connectivity")
+plt.pcolormesh(pred_conn.reshape(len(neu_id), -1))
+plt.subplot(1, 3 ,3)
+delta = (true_conn - pred_conn.reshape(len(neu_id), -1)).astype(float)
+delta[delta == 0] = np.nan
+plt.title("Delta")
+plt.pcolormesh(delta, cmap="Spectral")
+plt.tight_layout()
+
+plt.show()
