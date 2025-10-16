@@ -6,25 +6,17 @@ import warnings
 import nemos as nmo
 import re
 
-from scripts.hpc_fits.fit_no_cv import basis
-
 os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
 os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"] = "platform"
 
-import pickle
-
-import jax
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import numpy as np
 import pynapple as nap
 from matplotlib.colors import ListedColormap, to_rgb
 from nemos.regularizer import GroupLasso
 
-from infer_connectivity.CreateNetwork import save_connectivity_matrix
 from infer_connectivity import load_model
-import networkx as nx
-from infer_connectivity.roc_utils import compute_filters
+from infer_connectivity.roc_utils import compute_filters, compute_roc_curve
 from pathlib import Path
 
 GRADED_COLOR_LIST = [
@@ -54,6 +46,7 @@ graph_file = base_dir / "simulations/sonica-sept-25-2025/graph0-sonica-sept-26-2
 fit_id = "sonica-oct-8-2025-400-seconds"
 output_directory = base_dir / "scripts" / "output" / fit_id
 config_directory = base_dir / "scripts" / "configs" / fit_id
+simulation_directory = base_dir / "simulations" / fit_id
 
 
 # get conf
@@ -110,26 +103,28 @@ basis_cls_name = conf_dict["basis_cls_name"]
 basis_cls = getattr(nmo.basis, basis_cls_name)
 basis = basis_cls(n_basis_funcs, window_size=window_size)
 neu_id, coef_pop = extract_coef_single_neu_glm(output_directory)
-compute_filters(coef_pop, basis)
+filters = compute_filters(coef_pop, basis)
+
+# extract connectivity
+connectivity_path = simulation_directory / pathlib.Path(conf_dict["connectivity_path"]).name
+true_conn = np.load(connectivity_path)
+true_conn += np.eye(true_conn.shape[0], dtype=int)
 
 
-
-
+fpr, tpr, roc_auc, ap, pred_conn, best_f1 = compute_roc_curve(true_conn, filters)
 
 
 
 # # AUROC and precision plot
-# fig, axs = plt.subplots(1, 1, figsize=(10, 8))
-# for k, ((reg, obs, ei), (fpr, tpr, roc_auc, ap, pred_conn)) in enumerate(results_roc.items()):
-#     # ROC curves'
-#     ei_label = "-ei" if ei else ""
-#     axs.plot(
-#         fpr, tpr, label=f"{reg}-{obs}{ei_label}(AUC = {roc_auc:.2f})", c=GRADED_COLOR_LIST[k]
-#     )
-# axs.plot([0, 1], [0, 1], "k--")
-# axs.set_xlabel("False Positives")
-# axs.set_ylabel("True Positives")
-# axs.legend()
-# axs.set_title("ROC Curves")
-#
-# plt.show()
+fig, axs = plt.subplots(1, 1, figsize=(10, 8))
+# ROC curves'
+axs.plot(
+    fpr, tpr, label=f"Lasso-Bernoulli (AUC = {roc_auc:.2f})"
+)
+axs.plot([0, 1], [0, 1], "k--")
+axs.set_xlabel("False Positives")
+axs.set_ylabel("True Positives")
+axs.legend()
+axs.set_title("ROC Curves")
+
+plt.show()
