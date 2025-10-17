@@ -45,9 +45,10 @@ for step in [2, 5, 10, 25]:
     fit_neurons.append((step, list(range(400)[::step])))
 
 pars = product(regularizers, observation_model, basis_class_name, enforce_ei, fit_neurons)
-for reg, obs, bas, neu, ei, fit_list in pars:
+for reg, obs, bas, ei, fit_list in pars:
     step, neurons = fit_list
     for neu in neurons:
+        print(neu, step)
         conf_dict = dict(
             observation_model=obs,
             regularizer=reg,
@@ -61,6 +62,6 @@ for reg, obs, bas, neu, ei, fit_list in pars:
             n_basis_funcs=n_basis_funcs,
             fit_list=neurons,
         )
-        with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}_{step}.json", "w") as f:
-            json.dump(conf_dict, f)
+        # with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}_{step}.json", "w") as f:
+        #     json.dump(conf_dict, f)
 
