@@ -172,7 +172,7 @@ for reg_str in param_grid["regularizer_strength"]:
     filters = compute_filters(current_model.coef_, basis)
 
     # Compute ROC metrics
-    fpr, tpr, roc_auc, ap, pred_conn, best_f1 = compute_roc_curve(true_conn[:, neuron_fit], filters)
+    fpr, tpr, roc_auc, ap, pred_conn, best_f1 = compute_roc_curve(true_conn[np.array(fit_list).astype(int), neuron_fit], filters)
 
     # Store results
     results['regularizer_strengths'].append(reg_str)
