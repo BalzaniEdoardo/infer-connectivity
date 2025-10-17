@@ -58,7 +58,7 @@ def run_experiment():
 
     num_fits = create_dsbatch_script()
     print("To run:")
-    num_jobs = min(20, num_fits)  # Use at most 20 tasks
+    num_jobs = min(5, num_fits)  # Use at most 20 tasks
     print(
         "module load disBatch; "
         "mkdir disbatch_logs; "

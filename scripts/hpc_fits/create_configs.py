@@ -39,28 +39,28 @@ enforce_ei = [False]
 regularizers = ["Lasso"]
 observation_model = ["Bernoulli"]
 basis_class_name = ["RaisedCosineLogConv"]
-neuron_id = range(400)
 inhibitory_neu_id = list(range(300, 400))
 fit_neurons = []
 for step in [2, 5, 10, 25]:
     fit_neurons.append((step, list(range(400)[::step])))
 
-pars = product(regularizers, observation_model, basis_class_name, neuron_id, enforce_ei, fit_neurons)
+pars = product(regularizers, observation_model, basis_class_name, enforce_ei, fit_neurons)
 for reg, obs, bas, neu, ei, fit_list in pars:
     step, neurons = fit_list
-    conf_dict = dict(
-        observation_model=obs,
-        regularizer=reg,
-        basis_cls_name=bas,
-        neuron_id=neu,
-        inhibitory_neuron_id=inhibitory_neu_id,
-        enforce_ei = ei,
-        connectivity_path=connectivity_path.as_posix(),
-        binsize=binsize,
-        history_window=history_window,
-        n_basis_funcs=n_basis_funcs,
-        fit_list=neurons,
-    )
-    with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}_{step}.json", "w") as f:
-        json.dump(conf_dict, f)
+    for neu in neurons:
+        conf_dict = dict(
+            observation_model=obs,
+            regularizer=reg,
+            basis_cls_name=bas,
+            neuron_id=neu,
+            inhibitory_neuron_id=inhibitory_neu_id,
+            enforce_ei = ei,
+            connectivity_path=connectivity_path.as_posix(),
+            binsize=binsize,
+            history_window=history_window,
+            n_basis_funcs=n_basis_funcs,
+            fit_list=neurons,
+        )
+        with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}_{step}.json", "w") as f:
+            json.dump(conf_dict, f)
 
