@@ -166,7 +166,8 @@ for reg_str in param_grid["regularizer_strength"]:
 
     current_model = model.__sklearn_clone__()
     current_model.set_params(regularizer_strength=reg_str)
-    current_model.fit(X, counts[:, neuron_fit])
+    fit_idx = fit_list.index(neuron_fit)
+    current_model.fit(X, counts[:, fit_idx])
 
     # Compute response filters, shape [input, 1, time]
     filters = compute_filters(current_model.coef_, basis)
