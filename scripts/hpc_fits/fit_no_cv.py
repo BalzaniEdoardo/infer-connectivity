@@ -1,7 +1,5 @@
 import os
 
-from scripts.hpc_fits.create_configs import conf_dict
-
 os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 os.environ['XLA_PYTHON_CLIENT_MEM_FRACTION'] = '0.75'  # Use only 75% of GPU memory
 os.environ['XLA_FLAGS'] = '--xla_gpu_strict_conv_algorithm_picker=false'
