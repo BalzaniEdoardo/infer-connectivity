@@ -62,6 +62,6 @@ for reg, obs, bas, ei, fit_list in pars:
             n_basis_funcs=n_basis_funcs,
             fit_list=neurons,
         )
-        # with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}_{step}.json", "w") as f:
-        #     json.dump(conf_dict, f)
+        with open(base_dir/f"{reg}_{obs}_{bas}_{neu}_{ei}_{step}.json", "w") as f:
+            json.dump(conf_dict, f)
 
