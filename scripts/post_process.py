@@ -169,7 +169,7 @@ prop_df['proportion'] = prop_df.apply(lambda row: row['count'] / totals[row['typ
 # Create the plot
 plt.figure(figsize=(12, 6))
 sns.barplot(data=prop_df, x='reg_str_label', y='proportion', hue='type',
-            palette={'E': '#3b82f6', 'I': '#ef4444'},
+            palette={'E': '#ef4444', 'I': '#3b82f6'},
             order=sorted(prop_df['reg_str_label'].unique(), key=lambda x: float(x)))
 plt.xlabel('Regularizer Strength')
 plt.ylabel('Proportion')
