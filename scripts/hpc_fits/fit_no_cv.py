@@ -245,6 +245,7 @@ metadata = {
     "neuron_fit": neuron_fit,
     "best_reg_strength": float(best_reg_strength) if best_reg_strength is not None else None,
     "best_roc_auc": float(best_roc_auc),
+    "fit_list": fit_list,
 }
 
 metadata_path = (
