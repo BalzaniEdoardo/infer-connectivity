@@ -59,12 +59,14 @@ basis_cls_name = conf_dict["basis_cls_name"]
 neuron_fit = conf_dict["neuron_id"]
 connectivity_path = conf_dict["connectivity_path"]
 
+
 logging.log(level=logging.INFO, msg="Extracted configs.")
 
 # Load simulations
 spikes = pickle.load(open(dataset_path, "rb"))
+fit_list = conf_dict.get("fit_list", list(range(len(spikes))))
 spikes_tsgroup = nap.TsGroup(
-    {n: nap.Ts(np.array(spikes[n]) / 1000) for n in range(len(spikes))}
+    {n: nap.Ts(np.array(spikes[n]) / 1000) for n in fit_list}
 )
 
 logging.log(level=logging.INFO, msg="Loaded simulated spikes into pynapple.")
