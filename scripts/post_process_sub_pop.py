@@ -228,7 +228,10 @@ def plot_roc_comparison(steps, fpr, tpr, roc_auc, fpr_exc, tpr_exc, roc_auc_exc,
                         fpr_inh, tpr_inh, roc_auc_inh):
     """Plot ROC curves comparing overall, excitatory, and inhibitory neurons."""
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-    colors = plt.cm.viridis(np.linspace(0, 0.9, len(steps)))
+
+    # Use graded color list, selecting colors evenly spaced
+    color_indices = np.linspace(0, len(GRADED_COLOR_LIST) - 1, len(steps)).astype(int)
+    colors = [GRADED_COLOR_LIST[i] for i in color_indices]
 
     titles = ['Overall', 'Excitatory Presynaptic', 'Inhibitory Presynaptic']
     data_sets = [
@@ -239,8 +242,9 @@ def plot_roc_comparison(steps, fpr, tpr, roc_auc, fpr_exc, tpr_exc, roc_auc_exc,
 
     for ax, title, (fpr_dict, tpr_dict, auc_dict) in zip(axes, titles, data_sets):
         for step, color in zip(steps, colors):
+            pct = 100.0 / step
             ax.plot(fpr_dict[step], tpr_dict[step],
-                    label=f'Step {step} (AUC={auc_dict[step]:.3f})',
+                    label=f'{pct:.1f}% neurons (AUC={auc_dict[step]:.3f})',
                     color=color, linewidth=2)
 
         ax.plot([0, 1], [0, 1], 'k--', linewidth=1, label='Chance')
@@ -260,13 +264,17 @@ def plot_connection_type_roc(conn_type_results, steps):
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
     axes = axes.flatten()
     conn_types = ['E→E', 'E→I', 'I→E', 'I→I']
-    colors = plt.cm.viridis(np.linspace(0, 0.9, len(steps)))
+
+    # Use graded color list, selecting colors evenly spaced
+    color_indices = np.linspace(0, len(GRADED_COLOR_LIST) - 1, len(steps)).astype(int)
+    colors = [GRADED_COLOR_LIST[i] for i in color_indices]
 
     for ax, conn_type in zip(axes, conn_types):
         for step, color in zip(steps, colors):
+            pct = 100.0 / step
             results = conn_type_results[step][conn_type]
             ax.plot(results['fpr'], results['tpr'],
-                    label=f'Step {step} (AUC={results["auc"]:.3f})',
+                    label=f'{pct:.1f}% neurons (AUC={results["auc"]:.3f})',
                     color=color, linewidth=2)
 
         ax.plot([0, 1], [0, 1], 'k--', linewidth=1, label='Chance')
@@ -288,8 +296,10 @@ def plot_auc_summary(conn_type_results, steps, roc_auc, roc_auc_exc, roc_auc_inh
     # Prepare data
     auc_data = []
     for step in steps:
+        pct = 100.0 / step
         auc_data.append({
             'Step': step,
+            'Percent': pct,
             'Overall': roc_auc[step],
             'E (pre)': roc_auc_exc[step],
             'I (pre)': roc_auc_inh[step],
@@ -300,7 +310,6 @@ def plot_auc_summary(conn_type_results, steps, roc_auc, roc_auc_exc, roc_auc_inh
         })
 
     df = pd.DataFrame(auc_data)
-    df_melted = df.melt(id_vars='Step', var_name='Analysis', value_name='AUC')
 
     # Plot
     x = np.arange(len(steps))
@@ -312,11 +321,11 @@ def plot_auc_summary(conn_type_results, steps, roc_auc, roc_auc_exc, roc_auc_inh
         data = df[analysis].values
         ax.bar(x + i * width, data, width, label=analysis, color=colors_palette[i])
 
-    ax.set_xlabel('Subsampling Step', fontsize=12, fontweight='bold')
+    ax.set_xlabel('Subsampling Rate', fontsize=12, fontweight='bold')
     ax.set_ylabel('ROC AUC', fontsize=12, fontweight='bold')
     ax.set_title('ROC AUC Comparison Across Analyses', fontsize=14, fontweight='bold')
     ax.set_xticks(x + width * 3)
-    ax.set_xticklabels([f'1:{s}' for s in steps])
+    ax.set_xticklabels([f'{100.0 / s:.1f}%' for s in steps])
     ax.legend(loc='best', ncol=2)
     ax.grid(True, axis='y', alpha=0.3)
     ax.set_ylim([0.5, 1.0])
