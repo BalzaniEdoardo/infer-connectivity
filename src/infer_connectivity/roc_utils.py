@@ -57,7 +57,7 @@ def compute_filters(weights, basis):
     kernels = basis.evaluate_on_grid(basis.window_size)[1]
     if weights.ndim == 1:
         # single neuron glm, [input, n_basis]
-        weights = weights.reshape( -1, basis.n_basis_funcs)
+        weights = weights.reshape(-1, basis.n_basis_funcs)
         # [input, time]
         resp_filters = weights @ kernels.T
         # [input, 1, time]

@@ -1,8 +1,10 @@
-from nemos.regularizer import Ridge, Lasso, GroupLasso
-from typing import Union, Tuple
-from nemos.typing import DESIGN_INPUT_TYPE
-from nemos import tree_utils
+from typing import Tuple, Union
+
 import jax.numpy as jnp
+from nemos import tree_utils
+from nemos.regularizer import GroupLasso, Lasso, Ridge
+from nemos.typing import DESIGN_INPUT_TYPE
+
 
 class MultiRegularization:
     @staticmethod
@@ -16,10 +18,10 @@ class MultiRegularization:
 
 class RidgeMultiRegularization(MultiRegularization, Ridge):
 
-
     @staticmethod
     def _penalization(
-        params: Tuple[DESIGN_INPUT_TYPE, jnp.ndarray], regularizer_strength: float | jnp.ndarray
+        params: Tuple[DESIGN_INPUT_TYPE, jnp.ndarray],
+        regularizer_strength: float | jnp.ndarray,
     ) -> jnp.ndarray:
         """
         Compute the Ridge penalization for given parameters.
@@ -52,7 +54,7 @@ class LassoMultiRegularization(MultiRegularization, Lasso):
 
     @staticmethod
     def _penalization(
-            params: Tuple[DESIGN_INPUT_TYPE, jnp.ndarray], regularizer_strength: float
+        params: Tuple[DESIGN_INPUT_TYPE, jnp.ndarray], regularizer_strength: float
     ) -> jnp.ndarray:
         """
         Compute the Lasso penalization for given parameters.
@@ -75,6 +77,7 @@ class LassoMultiRegularization(MultiRegularization, Lasso):
         return tree_utils.pytree_map_and_reduce(
             lambda x: l1_penalty(x, params[1]), sum, params[0]
         )
+
 
 class GroupLassoMultiRegularization(MultiRegularization, GroupLasso):
     def __init__(self, mask=None):

@@ -1,28 +1,27 @@
-import re
 import inspect
+import re
 import warnings
 from pathlib import Path
 from typing import Union
 
 import numpy as np
 from nemos.io.io import (
+    AVAILABLE_OBSERVATION_MODELS,
+    AVAILABLE_REGULARIZERS,
     MODEL_REGISTRY,
     _apply_custom_map,
-    get_user_keys_from_nested_dict,
     _get_invalid_mappings,
     _set_fit_params,
     _split_model_params,
     _suggest_keys,
     _unflatten_dict,
     _unflattened_user_map,
-    AVAILABLE_OBSERVATION_MODELS,
+    get_user_keys_from_nested_dict,
     instantiate_observation_model,
-    instantiate_regularizer
+    instantiate_regularizer,
 )
 
 from .ei_glm import GLMEI
-from nemos.io.io import AVAILABLE_REGULARIZERS
-
 
 MODEL_REGISTRY.update({"infer_connectivity.ei_glm.GLMEI": GLMEI})
 
@@ -52,11 +51,13 @@ def _expand_user_keys(user_key, flat_keys):
         flat_key = "__".join(path)
     return flat_key
 
+
 def load_model(filename: Union[str, Path], mapping_dict: dict = None):
     try:
         return new_load_model(filename, mapping_dict)
     except:
         return deprecated_load_model(filename, mapping_dict)
+
 
 def new_load_model(filename: Union[str, Path], mapping_dict: dict = None):
     """
@@ -200,6 +201,7 @@ def new_load_model(filename: Union[str, Path], mapping_dict: dict = None):
 
     return model
 
+
 def _get_invalid_mappings_deprecated(mapping_dict: dict | None) -> list:
     if mapping_dict is None:
         return []
@@ -208,6 +210,7 @@ def _get_invalid_mappings_deprecated(mapping_dict: dict | None) -> list:
         for k, v in mapping_dict.items()
         if (not inspect.isclass(v)) and not callable(v)
     ]
+
 
 def _unwrap_param(value):
     """
@@ -220,7 +223,6 @@ def _unwrap_param(value):
         # Nested dict: unwrap each leaf.
         return {k: _unwrap_param(v) for k, v in value.items()}
     return value[0]
-
 
 
 def _is_param(par):
@@ -375,9 +377,7 @@ def _split_model_params_deprecated(params: dict, model_class) -> tuple:
 
 def _set_fit_params_deprecated(model, fit_params: dict, filename: Path):
     """Set fit model attributes, warn if unrecognized."""
-    check_str = (
-        "\nIf this is confusing, try calling inspect_npz."
-    )
+    check_str = "\nIf this is confusing, try calling inspect_npz."
     for key, value in fit_params.items():
         if hasattr(model, key):
             setattr(model, key, value)
@@ -385,6 +385,7 @@ def _set_fit_params_deprecated(model, fit_params: dict, filename: Path):
             raise ValueError(
                 f"Unrecognized attribute '{key}' during model loading.{check_str}"
             )
+
 
 def _suggest_keys_deprecated(
     unmatched_keys: list[str], valid_keys: list[str], cutoff: float = 0.6
@@ -417,6 +418,7 @@ def _suggest_keys_deprecated(
     [('observaton_model', 'observation_model')]
     """
     import difflib
+
     key_paris = []  # format, (user_provided, similar key)
     for unmatched_key in unmatched_keys:
         suggestions = difflib.get_close_matches(
@@ -426,7 +428,9 @@ def _suggest_keys_deprecated(
     return key_paris
 
 
-def _unflatten_dict_deprecated(flat_dict: dict, flat_map_dict: dict | None = None) -> dict:
+def _unflatten_dict_deprecated(
+    flat_dict: dict, flat_map_dict: dict | None = None
+) -> dict:
     """
     Unflatten a dictionary with keys representing hierarchy into a nested dictionary.
 
@@ -473,6 +477,7 @@ def _unflatten_dict_deprecated(flat_dict: dict, flat_map_dict: dict | None = Non
                 v = None if np.isnan(v) else float(v)
         dct[keys[-1]] = [v, mapping] if add_mapping else v
     return nested_dict
+
 
 def deprecated_load_model(filename: Union[str, Path], mapping_dict: dict = None):
     """
@@ -602,9 +607,10 @@ def deprecated_load_model(filename: Union[str, Path], mapping_dict: dict = None)
     # if any value from saved_params is a key in mapping_dict,
     # replace it with the corresponding value from mapping_dict
     # surgery to fix deprecations
-    saved_params["inverse_link_function"] = saved_params["observation_model"]["params"].pop("inverse_link_function")
+    saved_params["inverse_link_function"] = saved_params["observation_model"][
+        "params"
+    ].pop("inverse_link_function")
     saved_params, updated_keys = _apply_custom_map_deprecated(saved_params)
-
 
     if len(updated_keys) > 0:
         warnings.warn(
@@ -615,10 +621,14 @@ def deprecated_load_model(filename: Union[str, Path], mapping_dict: dict = None)
     # Extract the model class from the saved attributes
     model_name = str(saved_params.pop("model_class"))
     MODEL_REGISTRY["nemos.glm.GLM"] = MODEL_REGISTRY["nemos.glm.glm.GLM"]
-    MODEL_REGISTRY["nemos.glm.PopulationGLM"] = MODEL_REGISTRY["nemos.glm.glm.PopulationGLM"]
+    MODEL_REGISTRY["nemos.glm.PopulationGLM"] = MODEL_REGISTRY[
+        "nemos.glm.glm.PopulationGLM"
+    ]
     model_class = MODEL_REGISTRY[model_name]
 
-    config_params, fit_params = _split_model_params_deprecated(saved_params, model_class)
+    config_params, fit_params = _split_model_params_deprecated(
+        saved_params, model_class
+    )
 
     # Create the model instance
     try:
