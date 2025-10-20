@@ -230,8 +230,7 @@ def plot_roc_comparison(steps, fpr, tpr, roc_auc, fpr_exc, tpr_exc, roc_auc_exc,
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
     # Use graded color list, selecting colors evenly spaced
-    color_indices = np.linspace(0, len(GRADED_COLOR_LIST) - 1, len(steps)).astype(int)
-    colors = [GRADED_COLOR_LIST[i] for i in color_indices]
+    colors = [GRADED_COLOR_LIST[i] for i in np.arange(len(steps))]
 
     titles = ['Overall', 'Excitatory Presynaptic', 'Inhibitory Presynaptic']
     data_sets = [
@@ -266,8 +265,7 @@ def plot_connection_type_roc(conn_type_results, steps):
     conn_types = ['E→E', 'E→I', 'I→E', 'I→I']
 
     # Use graded color list, selecting colors evenly spaced
-    color_indices = np.linspace(0, len(GRADED_COLOR_LIST) - 1, len(steps)).astype(int)
-    colors = [GRADED_COLOR_LIST[i] for i in color_indices]
+    colors = [GRADED_COLOR_LIST[i] for i in np.arange(len(steps))]
 
     for ax, conn_type in zip(axes, conn_types):
         for step, color in zip(steps, colors):
@@ -301,8 +299,6 @@ def plot_auc_summary(conn_type_results, steps, roc_auc, roc_auc_exc, roc_auc_inh
             'Step': step,
             'Percent': pct,
             'Overall': roc_auc[step],
-            'E (pre)': roc_auc_exc[step],
-            'I (pre)': roc_auc_inh[step],
             'E→E': conn_type_results[step]['E→E']['auc'],
             'E→I': conn_type_results[step]['E→I']['auc'],
             'I→E': conn_type_results[step]['I→E']['auc'],
@@ -314,7 +310,7 @@ def plot_auc_summary(conn_type_results, steps, roc_auc, roc_auc_exc, roc_auc_inh
     # Plot
     x = np.arange(len(steps))
     width = 0.12
-    analyses = ['Overall', 'E (pre)', 'I (pre)', 'E→E', 'E→I', 'I→E', 'I→I']
+    analyses = ['Overall', 'E→E', 'E→I', 'I→E', 'I→I']
     colors_palette = plt.cm.Set3(np.linspace(0, 1, len(analyses)))
 
     for i, analysis in enumerate(analyses):
@@ -324,7 +320,7 @@ def plot_auc_summary(conn_type_results, steps, roc_auc, roc_auc_exc, roc_auc_inh
     ax.set_xlabel('Subsampling Rate', fontsize=12, fontweight='bold')
     ax.set_ylabel('ROC AUC', fontsize=12, fontweight='bold')
     ax.set_title('ROC AUC Comparison Across Analyses', fontsize=14, fontweight='bold')
-    ax.set_xticks(x + width * 3)
+    ax.set_xticks(x + width * len(analyses) / 2 - width/2)
     ax.set_xticklabels([f'{100.0 / s:.1f}%' for s in steps])
     ax.legend(loc='best', ncol=2)
     ax.grid(True, axis='y', alpha=0.3)
